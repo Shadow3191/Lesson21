@@ -5,40 +5,28 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class CustomerService {
-    private CustomerDao customerDao = new CustomerDao();
+    private CustomerDao customerDao;
     private Scanner scanner = new Scanner(System.in);
 
+    public CustomerService(Connection connection) {
+        customerDao = new CustomerDao(connection);
+    }
 
-    public void show(Connection connection) throws SQLException {
-        for (Customer showCustomers : customerDao.find(connection)) {
+    public void show() throws SQLException {
+        for (Customer showCustomers : customerDao.find()) {
             System.out.println(showCustomers.getId() + " | " + showCustomers.getName() + " | " + showCustomers.getNipNumber());
         }
     }
 
-    public void add(Connection connection) throws SQLException {
-        System.out.println("Enter the name of customer :");
-        String name = scanner.nextLine();
-        System.out.println("Enter the nip number of customer :");
-        String nipNumber = scanner.nextLine();
-
-        customerDao.add(new Customer(name, nipNumber), connection);
+    public void add(Customer customer) throws SQLException {
+        customerDao.add(customer);
     }
 
-    public void edit(Connection connection) throws SQLException {
-        System.out.println("Enter the name :");
-        String name = scanner.nextLine();
-        System.out.println("Enter the nip number :");
-        String nipNumber = scanner.nextLine();
-        System.out.println("Enter id number of customer who you want to edit :");
-        int id = scanner.nextInt();
-
-        customerDao.edit(new Customer(id, name, nipNumber), connection);
+    public void edit(Customer customer) throws SQLException {
+        customerDao.edit(customer);
     }
 
-    public void delete(Connection connection) throws SQLException {
-        System.out.println("Enter the customer id number to be removed from the database:");
-        int id = scanner.nextInt();
-
-        customerDao.delete(new Customer(id, null, null), connection);
+    public void delete(Customer customer) throws SQLException {
+        customerDao.delete(customer);
     }
 }

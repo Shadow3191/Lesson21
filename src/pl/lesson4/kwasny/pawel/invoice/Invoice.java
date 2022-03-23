@@ -17,19 +17,14 @@ public class Invoice {
         this.priceGossSum = priceGossSum;
     }
 
-    public Invoice(String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGossSum){
+    public Invoice(String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGossSum) {
         this.number = number;
         this.customerID = customerID;
         this.priceNetSum = priceNetSum;
         this.priceGossSum = priceGossSum;
     }
-//    public Invoice(String number, Integer customerID, BigDecimal priceNetSum){
-//        this.number = number;
-//        this.customerID = customerID;
-//        this.priceNetSum = priceNetSum;
-//    }
 
-    public Integer getId(){
+    public Integer getId() {
         return id;
     }
 
@@ -37,15 +32,15 @@ public class Invoice {
         return number;
     }
 
-    public Integer getCustomerID(){
+    public Integer getCustomerID() {
         return customerID;
     }
 
-    public BigDecimal getPriceNetSum(){
+    public BigDecimal getPriceNetSum() {
         return priceNetSum;
     }
 
-    public BigDecimal getPriceGossSum(){
+    public BigDecimal getPriceGossSum() {
         return priceGossSum;
     }
 

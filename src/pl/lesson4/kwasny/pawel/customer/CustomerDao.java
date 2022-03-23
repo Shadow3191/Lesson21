@@ -5,10 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CustomerDao {
-    PreparedStatement preparedStatement;
-    String sql;
+    private PreparedStatement preparedStatement;
+    private String sql;
+    private Connection connection;
 
-    public List<Customer> find(Connection connection) throws SQLException {
+    public CustomerDao(Connection connection) {
+        this.connection = connection;
+    }
+
+    public List<Customer> find() throws SQLException {
 
         Statement selectStmt = connection.createStatement();
         ResultSet resultSet = selectStmt.executeQuery("select * from customer;");
@@ -23,7 +28,7 @@ public class CustomerDao {
         return customers;
     }
 
-    public void add(Customer customer, Connection connection) throws SQLException {
+    public void add(Customer customer) throws SQLException {
         sql = "insert into customer(name, nip_number) values (?, ?);";
         preparedStatement = connection.prepareStatement(sql);
 
@@ -33,7 +38,7 @@ public class CustomerDao {
         preparedStatement.close();
     }
 
-    public void edit(Customer customer, Connection connection) throws SQLException {
+    public void edit(Customer customer) throws SQLException {
         sql = "update customer set name = ?, nip_number = ? where id = ?";
         preparedStatement = connection.prepareStatement(sql);
 
@@ -45,7 +50,7 @@ public class CustomerDao {
         preparedStatement.close();
     }
 
-    public void delete(Customer customer, Connection connection) throws SQLException {
+    public void delete(Customer customer) throws SQLException {
         sql = "delete from customer where id = ?";
         preparedStatement = connection.prepareStatement(sql);
 
