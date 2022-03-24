@@ -27,6 +27,8 @@ import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
 import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
 
@@ -161,6 +163,36 @@ public class Main {
                     invoiceService.delete(new Invoice(id, null, null, null, null));
                 }
             }
+            if (choose == 4) {
+                System.out.println("1. Show invoice items \n2. Add invoice \n3. Edit invoice \n4. Delete invoice");
+                choose = scanner.nextInt();
+                InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
+
+                if (choose == 1) {
+                    invoiceItemService.show();
+                }
+
+                if (choose == 2) {
+                    System.out.println("Enter the product id :");
+                    int prductId = scanner.nextInt();
+                    System.out.println("Enter the invoide id :");
+                    int invoiceId = scanner.nextInt();
+                    System.out.println("Enter the product quantity :");
+                    int quantity = scanner.nextInt();
+                    System.out.println("Enter the product name :");
+                    scanner.nextLine();
+                    String name = scanner.nextLine();
+                    System.out.println("Enter netto price :");
+                    BigDecimal netPrice = scanner.nextBigDecimal();
+                    System.out.println("Enter the tax percent :");
+                    BigDecimal taxPercent = scanner.nextBigDecimal();
+                    BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice);
+//               TODO nie mnoży przez ilosc dodanych produktow DOKONCZYC
+
+
+                    invoiceItemService.add(new InvoiceItem(prductId, invoiceId, quantity, name, netPrice, taxPercent, grossPrice));
+                }
+            }
 
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -168,5 +200,5 @@ public class Main {
             System.out.println("VendorError: " + ex.getErrorCode());
         }
     }
-    //TODO W SERWISIE NIE MOZE BYC SOUTA ANI SCANEROW !
+    // W SERWISIE NIE MOZE BYC SOUTA ANI SCANEROW !
 }

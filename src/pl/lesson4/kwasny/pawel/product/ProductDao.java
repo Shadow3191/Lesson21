@@ -9,7 +9,7 @@ public class ProductDao {
     private String sql;
     private Connection connection;
 
-    public ProductDao(Connection connection){
+    public ProductDao(Connection connection) {
         this.connection = connection;
     }
 
@@ -43,7 +43,7 @@ public class ProductDao {
     }
 
     public void edit(Product product) throws SQLException {
-        String sql = "update product set ean_code = ?, name = ?, price_net = ?, tax_percent = ? where id = ?;";
+        sql = "update product set ean_code = ?, name = ?, price_net = ?, tax_percent = ? where id = ?;";
         preparedStatement = connection.prepareStatement(sql);
 
         preparedStatement.setString(1, product.getEanCode());
@@ -56,7 +56,7 @@ public class ProductDao {
     }
 
     public void delete(Product product) throws SQLException {
-        String sql = "delete from product where id = ?";
+        sql = "delete from product where id = ?";
         preparedStatement = connection.prepareStatement(sql);
 
         preparedStatement.setInt(1, product.getId());

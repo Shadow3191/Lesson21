@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class ProductService {
     private ProductDao productDao;
-    private Scanner scanner = new Scanner(System.in);
 
     public ProductService(Connection connection) {
         productDao = new ProductDao(connection);
