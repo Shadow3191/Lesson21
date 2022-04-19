@@ -1,9 +1,7 @@
 package pl.lesson4.kwasny.pawel.invoiceItem;
 
-import pl.lesson4.kwasny.pawel.product.Product;
-
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.List;
 
 public class InvoiceItemService {
     private InvoiceItemDao invoiceItemDao;
@@ -12,17 +10,17 @@ public class InvoiceItemService {
         invoiceItemDao = new InvoiceItemDao(connection);
     }
 
-    public void show() throws SQLException {
-        for (InvoiceItem showInvoiceItem : invoiceItemDao.find()) {
-            System.out.println(showInvoiceItem.getId() + " | " + showInvoiceItem.getProductId() + " | " + showInvoiceItem.getInvoiceId() +
-                    " | " + showInvoiceItem.getQuantity() + " | " + showInvoiceItem.getProductName() + " | " + showInvoiceItem.getNetPrice()
-            + " | " + showInvoiceItem.getTaxPercent() + " | " + showInvoiceItem.getGrossPrice());
-        }
+    public List<InvoiceItem> find() {
+        return invoiceItemDao.find();
     }
 
 
-    public void add(InvoiceItem invoiceItem) throws SQLException {
+    public void add(InvoiceItem invoiceItem) {
         invoiceItemDao.add(invoiceItem);
+    }
+
+    public void edit(InvoiceItem invoiceItem) {
+        invoiceItemDao.edit(invoiceItem);
     }
 
 }

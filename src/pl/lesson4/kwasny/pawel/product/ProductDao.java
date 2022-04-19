@@ -1,5 +1,7 @@
 package pl.lesson4.kwasny.pawel.product;
 
+import pl.lesson4.kwasny.pawel.DatabaseException;
+
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,38 +32,62 @@ public class ProductDao {
         return products;
     }
 
-    public void add(Product product) throws SQLException {
+    public void add(Product product) {
         sql = "insert into product(ean_code, name, price_net, tax_percent) values (?, ?, ?, ?);";
-        preparedStatement = connection.prepareStatement(sql);
-
-        preparedStatement.setString(1, product.getEanCode());
-        preparedStatement.setString(2, product.getName());
-        preparedStatement.setBigDecimal(3, product.getPriceNet());
-        preparedStatement.setBigDecimal(4, product.getTaxPercent());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, product.getEanCode());
+            preparedStatement.setString(2, product.getName());
+            preparedStatement.setBigDecimal(3, product.getNetPrice());
+            preparedStatement.setBigDecimal(4, product.getTaxPercent());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
-    public void edit(Product product) throws SQLException {
+    public void edit(Product product) {
         sql = "update product set ean_code = ?, name = ?, price_net = ?, tax_percent = ? where id = ?;";
-        preparedStatement = connection.prepareStatement(sql);
-
-        preparedStatement.setString(1, product.getEanCode());
-        preparedStatement.setString(2, product.getName());
-        preparedStatement.setBigDecimal(3, product.getPriceNet());
-        preparedStatement.setBigDecimal(4, product.getTaxPercent());
-        preparedStatement.setInt(5, product.getId());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, product.getEanCode());
+            preparedStatement.setString(2, product.getName());
+            preparedStatement.setBigDecimal(3, product.getNetPrice());
+            preparedStatement.setBigDecimal(4, product.getTaxPercent());
+            preparedStatement.setInt(5, product.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
-    public void delete(Product product) throws SQLException {
+    public void delete(Product product) {
         sql = "delete from product where id = ?";
-        preparedStatement = connection.prepareStatement(sql);
-
-        preparedStatement.setInt(1, product.getId());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, product.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
 

@@ -1,34 +1,33 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemDao;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.List;
 
 public class InvoiceService {
-    private Scanner scanner = new Scanner(System.in);
     private InvoiceDao invoiceDao;
+    private InvoiceItemDao invoiceItemDao;
 
     public InvoiceService(Connection connection) {
         invoiceDao = new InvoiceDao(connection);
     }
 
-    public void show() throws SQLException {
-        for (Invoice showInvoice : invoiceDao.find()) {
-            System.out.println(showInvoice.getId() + " | " + showInvoice.getNumber() + " | " + showInvoice.getCustomerID() + " | " +
-                    showInvoice.getPriceNetSum() + " | " + showInvoice.getPriceGossSum());
-        }
+    public List<Invoice> find() throws SQLException {
+        return invoiceDao.find();
     }
 
     public void add(Invoice invoice) {
         invoiceDao.add(invoice);
     }
 
-    public void edit(Invoice invoice) throws SQLException {
+    public void edit(Invoice invoice) {
         invoiceDao.edit(invoice);
     }
 
-    public void delete(Invoice invoice) throws SQLException {
+    public void delete(Invoice invoice) {
         invoiceDao.delete(invoice);
     }
 }
-//TODO tutaj w cenie brutto powinno mnożyć netto razy 23% ale jak to napisac ?

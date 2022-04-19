@@ -2,31 +2,28 @@ package pl.lesson4.kwasny.pawel.customer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.List;
 
 public class CustomerService {
     private CustomerDao customerDao;
-    private Scanner scanner = new Scanner(System.in);
 
     public CustomerService(Connection connection) {
         customerDao = new CustomerDao(connection);
     }
 
-    public void show() throws SQLException {
-        for (Customer showCustomers : customerDao.find()) {
-            System.out.println(showCustomers.getId() + " | " + showCustomers.getName() + " | " + showCustomers.getNipNumber());
-        }
+    public List<Customer> find() throws SQLException {
+        return customerDao.find();
     }
 
-    public void add(Customer customer) throws SQLException {
+    public void add(Customer customer) {
         customerDao.add(customer);
     }
 
-    public void edit(Customer customer) throws SQLException {
+    public void edit(Customer customer) {
         customerDao.edit(customer);
     }
 
-    public void delete(Customer customer) throws SQLException {
+    public void delete(Customer customer) {
         customerDao.delete(customer);
     }
 }

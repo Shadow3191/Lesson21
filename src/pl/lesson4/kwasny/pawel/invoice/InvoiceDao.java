@@ -53,27 +53,43 @@ public class InvoiceDao {
         }
     }
 
-    public void edit(Invoice invoice) throws SQLException {
+    public void edit(Invoice invoice) {
         sql = "update invoice set number = ?, customer_id = ?, price_net_sum = ?,price_gross_sum = ? where id = ?";
-        preparedStatement = connection.prepareStatement(sql);
-
-        preparedStatement.setString(1, invoice.getNumber());
-        preparedStatement.setInt(2, invoice.getCustomerID());
-        preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
-        preparedStatement.setBigDecimal(4, invoice.getPriceGossSum());
-        preparedStatement.setInt(5, invoice.getId());
-
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, invoice.getNumber());
+            preparedStatement.setInt(2, invoice.getCustomerID());
+            preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
+            preparedStatement.setBigDecimal(4, invoice.getPriceGossSum());
+            preparedStatement.setInt(5, invoice.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
-    public void delete(Invoice invoice) throws SQLException {
+    public void delete(Invoice invoice) {
         sql = "delete from invoice where id = ?";
-        preparedStatement = connection.prepareStatement(sql);
-
-        preparedStatement.setInt(1, invoice.getId());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, invoice.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
-
 }
+
+// TODO w invoice trzeba wyswietlic liste uzytkownikow zeby wiedzial jakie id ma customer zeby wiedzial co ma dodac
