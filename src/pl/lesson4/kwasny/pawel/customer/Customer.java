@@ -1,9 +1,11 @@
 package pl.lesson4.kwasny.pawel.customer;
 
+
 public class Customer {
     private Integer id;
     private String name;
     private String nipNumber;
+
 
     public Customer(Integer id, String name, String nipNumber) {
         this.id = id;

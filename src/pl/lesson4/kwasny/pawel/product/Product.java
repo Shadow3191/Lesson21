@@ -6,21 +6,21 @@ public class Product {
     private Integer id;
     private String eanCode;
     private String name;
-    private BigDecimal priceNet;
+    private BigDecimal netPrice;
     private BigDecimal taxPercent;
 
-    public Product(Integer id, String eanCode, String name, BigDecimal priceNet, BigDecimal taxPercent) {
+    public Product(Integer id, String eanCode, String name, BigDecimal netPrice, BigDecimal taxPercent) {
         this.id = id;
         this.eanCode = eanCode;
         this.name = name;
-        this.priceNet = priceNet;
+        this.netPrice = netPrice;
         this.taxPercent = taxPercent;
     }
 
-    public Product(String eanCode, String name, BigDecimal priceNet, BigDecimal taxPercent) {
+    public Product(String eanCode, String name, BigDecimal netPrice, BigDecimal taxPercent) {
         this.eanCode = eanCode;
         this.name = name;
-        this.priceNet = priceNet;
+        this.netPrice = netPrice;
         this.taxPercent = taxPercent;
     }
 
@@ -36,8 +36,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPriceNet() {
-        return priceNet;
+    public BigDecimal getNetPrice() {
+        return netPrice;
     }
 
     public BigDecimal getTaxPercent() {
