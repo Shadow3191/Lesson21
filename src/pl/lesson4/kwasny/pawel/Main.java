@@ -43,22 +43,32 @@ public class Main {
         }
 
         Scanner scanner = new Scanner(System.in);
-        int choose;
+        int choose = 0;
         Connection connection;
 
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=patryk&password=patryk");
 
+            do {
+                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 5) Close program");
+                runOperation(scanner, connection);
+            } while (choose != 9);
 
-            System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item");
-            choose = scanner.nextInt();
-            UserIO userIO = new UserIO();
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        }
+    }
 
-            if (choose == 1) {
-                System.out.println("1. Show products \n2. Add product \n3. Edit product \n4. Delete product");
-                choose = scanner.nextInt();
+    private static void runOperation(Scanner scanner, Connection connection) throws SQLException {
+        int choose = 0;
+        choose = scanner.nextInt();
+        UserIO userIO = new UserIO();
+
+        if (choose == 1) {
+            do {
                 ProductService productService = new ProductService(connection);
-
                 if (choose == 1) {
                     userIO.showProduct(productService.find());
                 }
@@ -69,19 +79,23 @@ public class Main {
                     productService.edit(userIO.editProduct());
                 }
                 if (choose == 4) {
-//                    System.out.println("Enter the product id number to be removed from the database: ");
-//                    int id = scanner.nextInt();
-//                    products.delete(new Product(id, null, null, null, null));
                     productService.delete(userIO.deleteProduct());
                 }
-                choose = 0;
-            }
-            if (choose == 2) {
-                System.out.println("1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer");
-                choose = scanner.nextInt();
+                if (choose == 5) {
+                    break;
+                }
 
+                System.out.println("What you whant to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                choose = scanner.nextInt();
+            } while (choose != 9);
+        }
+//        choose = 0;
+
+        if (choose == 2) {
+            do {
                 CustomerService customerService = new CustomerService(connection);
-//                CustomerDao customerDao = new CustomerDao(connection);
+                System.out.println("What you whant to do :\n1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
+                choose = scanner.nextInt();
                 if (choose == 1) {
                     userIO.showCustomers(customerService.find());
                 }
@@ -93,52 +107,53 @@ public class Main {
                 }
                 if (choose == 4) {
                     customerService.delete(userIO.deleteCustomer());
-                    // TODO powiazanie w bazie jest nie tak
                 }
-                choose = 0;
+                if (choose == 5) {
+                    break;
+                }
+                System.out.println("What you whant to do :\n1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
+                choose = scanner.nextInt();
+            } while (choose != 9);
+        }
+
+        if (choose == 3) {
+            System.out.println("1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice");
+            choose = scanner.nextInt();
+            InvoiceService invoiceService = new InvoiceService(connection);
+            if (choose == 1) {
+                userIO.showInvoices(invoiceService.find());
+            }
+            if (choose == 2) {
+                invoiceService.add(userIO.addInvoice());
             }
             if (choose == 3) {
-                System.out.println("1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice");
-                choose = scanner.nextInt();
-                InvoiceService invoiceService = new InvoiceService(connection);
-//                InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
-//                UserIO userIO = new UserIO();
-
-                if (choose == 1) {
-                    userIO.showInvoices(invoiceService.find());
-                }
-                if (choose == 2) {
-                    invoiceService.add(userIO.addInvoice());
-                }
-                if (choose == 3) {
-                    invoiceService.edit(userIO.editInvoice());
-                }
-                if (choose == 4) {
-//                    invoiceItemService.delete() tutaj zrobic zeby sie usuwalo we wskazanym miejscu wszystko z invoiceItem a nastepnie w tym nizej
-//                    invoiceItemService.
-                    invoiceService.delete(userIO.deleteInvoice());
-                }
+                invoiceService.edit(userIO.editInvoice());
             }
             if (choose == 4) {
-                System.out.println("1. Show invoice items \n2. Add invoice \n3. Edit invoice \n4. Delete invoice");
-                choose = scanner.nextInt();
-                InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
-
-                if (choose == 1) {
-                    userIO.showInvoiceItem(invoiceItemService.find());
-                }
-                if (choose == 2) {
-                    invoiceItemService.add(userIO.addInvoiceItem());
-                }
-                if (choose == 3) {
-                    invoiceItemService.edit(userIO.editInvoiceItem());
-                }
+                invoiceService.delete(userIO.deleteInvoice());
             }
+            choose = 0;
+        }
+        if (choose == 4) {
+            System.out.println("1. Show invoice items \n2. Add invoice \n3. Edit invoice \n4. Delete invoice");
+            choose = scanner.nextInt();
+            InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
 
-        } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            if (choose == 1) {
+                userIO.showInvoiceItem(invoiceItemService.find());
+            }
+            if (choose == 2) {
+                invoiceItemService.add(userIO.addInvoiceItem());
+            }
+            if (choose == 3) {
+                invoiceItemService.edit(userIO.editInvoiceItem());
+            }
+            if (choose == 4) {
+                invoiceItemService.delete(userIO.deleteInvoiceItem());
+            }
+        } else if (choose == 9) {
+            System.out.println("You close program, see you next time !");
+            System.exit(0);
         }
     }
 }

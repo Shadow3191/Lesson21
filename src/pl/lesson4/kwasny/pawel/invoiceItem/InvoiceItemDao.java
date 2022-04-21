@@ -95,9 +95,8 @@ public class InvoiceItemDao {
             }
         }
     }
-    // TODO 19.04 - aby usunac invoice musimy z invoice_item usunac invoice_id ktore posiada dany invoice znaleźć to i przerobić
+
     public void delete(InvoiceItem invoiceItem) {
-        deleteByInvoiceId(invoiceItem);
         sql = "delete from invoice_item where id = ?;";
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -113,24 +112,7 @@ public class InvoiceItemDao {
             }
         }
     }
-// usuwamy wszystkie itemy dla danego invoisa
-    public void deleteByInvoiceId(InvoiceItem invoiceItem) {
-        sql = "delete from invoice_item where invoice_id = ?;";
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, invoiceItem.getId());
-            preparedStatement.executeUpdate();
-        } catch (SQLException sqlException) {
-            throw new DatabaseException(sqlException.getMessage(), sqlException);
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException sqlException) {
-                throw new DatabaseException(sqlException.getMessage(), sqlException);
-            }
-        }
 
-    }
 
 }
 // create method whos delete invoiceItem before delete invoice

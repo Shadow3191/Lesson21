@@ -17,6 +17,7 @@ public class UserIO {
         for (Customer customer : customers) {
             System.out.println(customer.getId() + " | " + customer.getName() + " | " + customer.getNipNumber());
         }
+        System.out.println();
     }
 
     // TODO change all names to correct
@@ -26,6 +27,7 @@ public class UserIO {
         System.out.println("Enter the nip number of customer :");
         String nipNumber = scanner.nextLine();
         return new Customer(name, nipNumber);
+
     }
 
     public Customer editCustomer() {
@@ -46,10 +48,12 @@ public class UserIO {
     }
 
     public void showProduct(List<Product> products) {
+        System.out.println("Products :");
         for (Product product : products) {
             System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
                     product.getNetPrice() + " | " + product.getTaxPercent());
         }
+        System.out.println();
     }
 
     public Product addProduct() {
@@ -160,8 +164,13 @@ public class UserIO {
         System.out.println("Enter tax percent :");
         BigDecimal taxPercent = scanner.nextBigDecimal();
         BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice).multiply(BigDecimal.valueOf(quantity));
-
         return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
+    }
+
+    public InvoiceItem deleteInvoiceItem() {
+        System.out.println("Enter the invoice item id number to be removed from the database:");
+        int id = scanner.nextInt();
+        return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem

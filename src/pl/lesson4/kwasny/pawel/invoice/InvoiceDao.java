@@ -1,6 +1,7 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -75,6 +76,7 @@ public class InvoiceDao {
     }
 
     public void delete(Invoice invoice) {
+        deleteByInvoiceId(invoice);
         sql = "delete from invoice where id = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -90,6 +92,25 @@ public class InvoiceDao {
             }
         }
     }
+// TODO poniższ metoda usuwa w powyzszej odpowiednio numer invoice item invoice id abym mogl usunac invoice
+    public void deleteByInvoiceId(Invoice invoice) {
+        sql = "delete from invoice_item where invoice_id = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, invoice.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+
+    }
+
 }
 
 // TODO w invoice trzeba wyswietlic liste uzytkownikow zeby wiedzial jakie id ma customer zeby wiedzial co ma dodac

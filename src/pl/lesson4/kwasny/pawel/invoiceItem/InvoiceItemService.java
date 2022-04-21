@@ -23,4 +23,8 @@ public class InvoiceItemService {
         invoiceItemDao.edit(invoiceItem);
     }
 
+    public void delete(InvoiceItem invoiceItem) {
+        invoiceItemDao.delete(invoiceItem);
+    }
+
 }
