@@ -1,6 +1,7 @@
 package pl.lesson4.kwasny.pawel.product;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
+import pl.lesson4.kwasny.pawel.invoice.Invoice;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -74,7 +75,25 @@ public class ProductDao {
     }
 
     public void delete(Product product) {
+        deleteProductIdFromInvoiceItem(product);
         sql = "delete from product where id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, product.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
+
+    public void deleteProductIdFromInvoiceItem(Product product) {
+        sql = "delete from invoice_item where product_id = ?;";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, product.getId());

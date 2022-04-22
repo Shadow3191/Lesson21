@@ -17,6 +17,10 @@ public class UserIO {
         for (Customer customer : customers) {
             System.out.println(customer.getId() + " | " + customer.getName() + " | " + customer.getNipNumber());
         }
+        if (customers != null && customers.isEmpty()) {
+            System.out.println("This database is empty - don't have added any position\n");
+        }
+        System.out.println();
     }
 
     // TODO change all names to correct
@@ -25,6 +29,7 @@ public class UserIO {
         String name = scanner.nextLine();
         System.out.println("Enter the nip number of customer :");
         String nipNumber = scanner.nextLine();
+//        scanner.nextLine();
         return new Customer(name, nipNumber);
     }
 
@@ -42,14 +47,20 @@ public class UserIO {
     public Customer deleteCustomer() {
         System.out.println("Enter the customer id number to be removed from the database:");
         int id = scanner.nextInt();
+        System.out.println("You delete id number : " + id);
         return new Customer(id, null, null);
     }
 
     public void showProduct(List<Product> products) {
+        System.out.println("Products :");
         for (Product product : products) {
             System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
                     product.getNetPrice() + " | " + product.getTaxPercent());
         }
+        if (products != null && products.isEmpty()) {
+            System.out.println("This database is empty - don't have added any position\n");
+        }
+        System.out.println();
     }
 
     public Product addProduct() {
@@ -61,6 +72,8 @@ public class UserIO {
         BigDecimal netPrice = scanner.nextBigDecimal();
         System.out.println("Enter tax percent :");
         BigDecimal taxPercent = scanner.nextBigDecimal();
+        scanner.nextLine();
+        System.out.println();
         return new Product(ean, name, netPrice, taxPercent);
     }
 
@@ -76,12 +89,14 @@ public class UserIO {
         BigDecimal netPrice = scanner.nextBigDecimal();
         System.out.println("Enter tax percent :");
         BigDecimal taxPercent = scanner.nextBigDecimal();
+        System.out.println();
         return new Product(id, ean, name, netPrice, taxPercent);
     }
 
     public Product deleteProduct() {
         System.out.println("Enter the product id number to be removed from the database: ");
         int id = scanner.nextInt();
+        System.out.println("You delete id number : " + id);
         return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
@@ -90,10 +105,15 @@ public class UserIO {
             System.out.println(invoice.getId() + " | " + invoice.getNumber() + " | " + invoice.getCustomerID() + " | "
                     + invoice.getPriceNetSum() + " | " + invoice.getPriceGossSum());
         }
+        if (invoices != null && invoices.isEmpty()) {
+            System.out.println("This database is empty - don't have added any position.\n");
+        }
+        System.out.println();
+
     }
 
     public Invoice addInvoice() {
-        System.out.println("Enter number :");
+        System.out.println("Enter invoice number :");
         String number = scanner.nextLine();
         System.out.println("Enter customer id :");
         int customerId = scanner.nextInt();
@@ -114,6 +134,7 @@ public class UserIO {
     public Invoice deleteInvoice() {
         System.out.println("Enter the invoice id number to be removed from the database:");
         int id = scanner.nextInt();
+        System.out.println("You delete id number : " + id);
         return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
@@ -122,6 +143,9 @@ public class UserIO {
             System.out.println(showInvoiceItem.getId() + " | " + showInvoiceItem.getProductId() + " | " + showInvoiceItem.getInvoiceId() +
                     " | " + showInvoiceItem.getQuantity() + " | " + showInvoiceItem.getProductName() + " | " + showInvoiceItem.getNetPrice()
                     + " | " + showInvoiceItem.getTaxPercent() + " | " + showInvoiceItem.getGrossPrice());
+        }
+        if (invoiceItems != null && invoiceItems.isEmpty()) {
+            System.out.println("This database is empty - don't have added any position.\n");
         }
     }
 
@@ -144,7 +168,8 @@ public class UserIO {
     }
 
     public InvoiceItem editInvoiceItem() {
-        System.out.println("Enter id from invoice item what you whant to edit :");
+
+        System.out.println("Enter id from invoice item what you want to edit :");
         int id = scanner.nextInt();
         System.out.println("Enter product id who you want to edit :");
         int productId = scanner.nextInt();
@@ -154,14 +179,21 @@ public class UserIO {
         int quantity = scanner.nextInt();
         System.out.println("Enter product name :");
         scanner.nextLine();
+        scanner.nextBigDecimal();
         String productName = scanner.nextLine();
         System.out.println("Enter net price :");
         BigDecimal netPrice = scanner.nextBigDecimal();
         System.out.println("Enter tax percent :");
         BigDecimal taxPercent = scanner.nextBigDecimal();
         BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice).multiply(BigDecimal.valueOf(quantity));
-
         return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
+    }
+
+    public InvoiceItem deleteInvoiceItem() {
+        System.out.println("Enter the invoice item id number to be removed from the database:");
+        int id = scanner.nextInt();
+        System.out.println("You delete id nr : " + id);
+        return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem
