@@ -47,10 +47,10 @@ public class Main {
         Connection connection;
 
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=root&password=Patryk");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=patryk&password=patryk");
 
             do {
-                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
+//                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
                 runOperation(scanner, connection);
             } while (choose != 9);
 
@@ -62,10 +62,11 @@ public class Main {
     }
 
     private static void runOperation(Scanner scanner, Connection connection) throws SQLException {
-        int choose = 0;
-        choose = scanner.nextInt();
+//        int choose = 0;
+//        choose = scanner.nextInt();
         UserIO userIO = new UserIO();
-
+        System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
+        int choose = scanner.nextInt();
         if (choose == 1) {
             choose = 0;
             do {
@@ -90,7 +91,7 @@ public class Main {
                     System.exit(0);
                 }
 
-                System.out.println("What you whant to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                System.out.println("What you want to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
                 choose = scanner.nextInt();
             } while (choose != 9);
         }
@@ -180,5 +181,10 @@ public class Main {
                 choose = scanner.nextInt();
             } while (choose != 9);
         }
+        if(choose == 9) {
+            System.out.println("You close program, see you next time !");
+            System.exit(0);
+        }
+
     }
 }
