@@ -108,7 +108,6 @@ public class InvoiceDao {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
-
     }
 
 }
