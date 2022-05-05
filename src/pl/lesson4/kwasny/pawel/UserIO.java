@@ -6,8 +6,12 @@ import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
 
 import java.math.BigDecimal;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class UserIO {
     Scanner scanner = new Scanner(System.in);
@@ -25,6 +29,7 @@ public class UserIO {
 
     // TODO change all names to correct
     public Customer prepareCustomerToAdd() {
+
         System.out.println("Enter the name of customer :");
         String name = scanner.nextLine();
         System.out.println("Enter the nip number of customer :");
@@ -33,15 +38,34 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
+    // TODO ogarnac jak powinny dzialac te wyrazenia reguladne
     public Customer editCustomer() {
         System.out.println("Enter the customer id number to edit :");
-        int id = scanner.nextInt();
+        int id = 0;
+
+        Pattern pattern = Pattern.compile("\\D");
+        try {
+            id = scanner.nextInt();
+            Matcher matcher = pattern.matcher(id);
+        }catch (InputMismatchException exception) {
+            System.out.println("Must be integer.");
+        }
         System.out.println("Enter name :");
-        scanner.nextLine();
+       try {
+           scanner.nextLine();
+           assertTrue(pattern.matcher(scanner.nextLine()).matches());
+       } catch (PatternSyntaxException patternSyntaxException) {
+           System.out.println(patternSyntaxException);
+       }
+        // metoda klasy string ktora moze pomoc w obsludze tego - wyrażenia regularne moga tez w tym pomoc
         String name = scanner.nextLine();
         System.out.println("Enter nip number :");
         String nipNumber = scanner.nextLine();
         return new Customer(id, name, nipNumber);
+    }
+
+    private void assertTrue(boolean matches) {
+
     }
 
     public Customer deleteCustomer() {
