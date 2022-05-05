@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 public class UserIO {
     Scanner scanner = new Scanner(System.in);
@@ -40,32 +38,53 @@ public class UserIO {
 
     // TODO ogarnac jak powinny dzialac te wyrazenia reguladne
     public Customer editCustomer() {
-        System.out.println("Enter the customer id number to edit :");
         int id = 0;
+        String name;
+        String nipNumber;
+        boolean goNext = false;
 
-        Pattern pattern = Pattern.compile("\\D");
-        try {
-            id = scanner.nextInt();
-            Matcher matcher = pattern.matcher(id);
-        }catch (InputMismatchException exception) {
-            System.out.println("Must be integer.");
-        }
+        do {
+            System.out.println("Enter the customer id number to edit :");
+            goNext = true;
+            try {
+                id = scanner.nextInt();
+            } catch (InputMismatchException exception) {
+                System.out.println("You must enter an integer.\n");
+                goNext = false;
+            }
+            scanner.nextLine();
+        } while (goNext != true);
+
+        Pattern pattern = Pattern.compile("[A-Za-z]*");
         System.out.println("Enter name :");
-       try {
-           scanner.nextLine();
-           assertTrue(pattern.matcher(scanner.nextLine()).matches());
-       } catch (PatternSyntaxException patternSyntaxException) {
-           System.out.println(patternSyntaxException);
-       }
+        name = scanner.nextLine();
+        while (!pattern.matcher(name).matches()) {
+
+            if (pattern.matcher(name).matches()) ;
+            {
+                System.out.println("You must write here name.\n");
+                System.out.println("Enter name :");
+                name = scanner.nextLine();
+            }
+        }
+
+
         // metoda klasy string ktora moze pomoc w obsludze tego - wyrażenia regularne moga tez w tym pomoc
-        String name = scanner.nextLine();
-        System.out.println("Enter nip number :");
-        String nipNumber = scanner.nextLine();
+//        String name = scanner.nextLine();
+//        TODO dopracować to aby obsługiwało odpowiednio nip !
+        pattern = Pattern.compile("[1-9]d{2}-d{2}-d{2}-d{3}");
+        System.out.println("Enter nip number in configuration 3-2-2-3 :");
+        nipNumber = scanner.nextLine();
+
+        while (!pattern.matcher(nipNumber).matches()) {
+            if (pattern.matcher(nipNumber).matches()); {
+                System.out.println("You must write here nip number !");
+                System.out.println("Enter nip number in configuration 3-2-2-3 :");
+                nipNumber = scanner.nextLine();
+            }
+        }
+
         return new Customer(id, name, nipNumber);
-    }
-
-    private void assertTrue(boolean matches) {
-
     }
 
     public Customer deleteCustomer() {
