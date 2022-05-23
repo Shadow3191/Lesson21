@@ -4,6 +4,7 @@ import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
+import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -42,7 +43,7 @@ public class UserIO {
         String name;
         String nipNumber;
         boolean goNext = false;
-
+//ProductService productService = new ProductService();
         do {
             System.out.println("Enter the customer id number to edit :");
             goNext = true;
@@ -72,12 +73,13 @@ public class UserIO {
         // metoda klasy string ktora moze pomoc w obsludze tego - wyrażenia regularne moga tez w tym pomoc
 //        String name = scanner.nextLine();
 //        TODO dopracować to aby obsługiwało odpowiednio nip !
-        pattern = Pattern.compile("[1-9]d{2}-d{2}-d{2}-d{3}");
+        pattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
         System.out.println("Enter nip number in configuration 3-2-2-3 :");
         nipNumber = scanner.nextLine();
 
         while (!pattern.matcher(nipNumber).matches()) {
-            if (pattern.matcher(nipNumber).matches()); {
+            if (pattern.matcher(nipNumber).matches()) ;
+            {
                 System.out.println("You must write here nip number !");
                 System.out.println("Enter nip number in configuration 3-2-2-3 :");
                 nipNumber = scanner.nextLine();
