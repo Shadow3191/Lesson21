@@ -50,7 +50,7 @@ public class Main {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=root&password=Patryk");
 
             do {
-                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
+//                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
                 runOperation(scanner, connection);
             } while (choose != 9);
 
@@ -62,60 +62,47 @@ public class Main {
     }
 
     private static void runOperation(Scanner scanner, Connection connection) throws SQLException {
-        int choose = 0;
-        choose = scanner.nextInt();
         UserIO userIO = new UserIO();
-
+        System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
+        int choose = scanner.nextInt();
         if (choose == 1) {
             choose = 0;
             do {
                 ProductService productService = new ProductService(connection);
                 if (choose == 1) {
                     userIO.showProduct(productService.find());
-                }
-                if (choose == 2) {
+                } else if (choose == 2) {
                     productService.add(userIO.addProduct());
-                }
-                if (choose == 3) {
-                    productService.edit(userIO.editProduct());
-                }
-                if (choose == 4) {
+                } else if (choose == 3) {
+                    productService.edit(userIO.editProduct(productService.find()));
+                } else if (choose == 4) {
                     productService.delete(userIO.deleteProduct());
-                }
-                if (choose == 5) {
+                } else if (choose == 5) {
                     break;
-                }
-                if (choose == 9) {
+                } else if (choose == 9) {
                     System.out.println("You close program, see you next time !");
                     System.exit(0);
                 }
-
-                System.out.println("What you whant to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                System.out.println("What you want to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
                 choose = scanner.nextInt();
             } while (choose != 9);
         }
 
         if (choose == 2) {
             choose = 0;
-
             do {
                 CustomerService customerService = new CustomerService(connection);
                 if (choose == 1) {
                     userIO.showCustomers(customerService.find());
-                }
-                if (choose == 2) {
+                } else if (choose == 2) {
                     customerService.add(userIO.prepareCustomerToAdd());
-                }
-                if (choose == 3) {
-                        customerService.edit(userIO.editCustomer());
-                }
-                if (choose == 4) {
+                } else if (choose == 3) {
+                    customerService.edit(userIO.editCustomer());
+                } else if (choose == 4) {
                     customerService.delete(userIO.deleteCustomer());
-                }
-                if (choose == 5) {
+                } else if (choose == 5) {
                     break;
-                }
-                if (choose == 9) {
+                } else if (choose == 9) {
                     System.out.println("You close program, see you next time !");
                     System.exit(0);
                 }
@@ -131,20 +118,15 @@ public class Main {
                 InvoiceService invoiceService = new InvoiceService(connection);
                 if (choose == 1) {
                     userIO.showInvoices(invoiceService.find());
-                }
-                if (choose == 2) {
+                } else if (choose == 2) {
                     invoiceService.add(userIO.addInvoice());
-                }
-                if (choose == 3) {
+                } else if (choose == 3) {
                     invoiceService.edit(userIO.editInvoice());
-                }
-                if (choose == 4) {
+                } else if (choose == 4) {
                     invoiceService.delete(userIO.deleteInvoice());
-                }
-                if (choose == 5) {
+                } else if (choose == 5) {
                     break;
-                }
-                if (choose == 9) {
+                } else if (choose == 9) {
                     System.out.println("You close program, see you next time !");
                     System.exit(0);
                 }
@@ -159,26 +141,25 @@ public class Main {
             do {
                 if (choose == 1) {
                     userIO.showInvoiceItem(invoiceItemService.find());
-                }
-                if (choose == 2) {
+                } else if (choose == 2) {
                     invoiceItemService.add(userIO.addInvoiceItem());
-                }
-                if (choose == 3) {
+                } else if (choose == 3) {
                     invoiceItemService.edit(userIO.editInvoiceItem());
-                }
-                if (choose == 4) {
+                } else if (choose == 4) {
                     invoiceItemService.delete(userIO.deleteInvoiceItem());
-                }
-                if (choose == 5) {
+                } else if (choose == 5) {
                     break;
-                }
-                if (choose == 9) {
+                } else if (choose == 9) {
                     System.out.println("You close program, see you next time !");
                     System.exit(0);
                 }
                 System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
                 choose = scanner.nextInt();
             } while (choose != 9);
+        }
+        if (choose == 9) {
+            System.out.println("You close program, see you next time !");
+            System.exit(0);
         }
     }
 }

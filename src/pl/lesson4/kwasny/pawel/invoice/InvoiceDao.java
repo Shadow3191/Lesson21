@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
-import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -19,18 +18,26 @@ public class InvoiceDao {
     public List<Invoice> find() throws SQLException {
         Statement selectStmt = connection.createStatement();
         ResultSet resultSet = selectStmt.executeQuery("select * from invoice;");
-
         List<Invoice> invoices = new LinkedList<>();
-        while (resultSet.next()) {
-            invoices.add(new Invoice(resultSet.getInt("id"),
-                    resultSet.getString("number"),
-                    resultSet.getInt("customer_id"),
-                    resultSet.getBigDecimal("price_net_sum"),
-                    resultSet.getBigDecimal("price_gross_sum")));
+        try {
+            while (resultSet.next()) {
+                invoices.add(new Invoice(resultSet.getInt("id"),
+                        resultSet.getString("number"),
+                        resultSet.getInt("customer_id"),
+                        resultSet.getBigDecimal("price_net_sum"),
+                        resultSet.getBigDecimal("price_gross_sum")));
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                resultSet.close();
+                selectStmt.close();
+                return invoices;
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
         }
-        resultSet.close();
-        selectStmt.close();
-        return invoices;
     }
 
     public void add(Invoice invoice) {
@@ -92,7 +99,8 @@ public class InvoiceDao {
             }
         }
     }
-// TODO poniższ metoda usuwa w powyzszej odpowiednio numer invoice item invoice id abym mogl usunac invoice
+
+    // TODO poniższ metoda usuwa w powyzszej odpowiednio numer invoice item invoice id abym mogl usunac invoice
     public void deleteByInvoiceId(Invoice invoice) {
         sql = "delete from invoice_item where invoice_id = ?;";
         try {
@@ -109,7 +117,6 @@ public class InvoiceDao {
             }
         }
     }
-
 }
 
 // TODO w invoice trzeba wyswietlic liste uzytkownikow zeby wiedzial jakie id ma customer zeby wiedzial co ma dodac

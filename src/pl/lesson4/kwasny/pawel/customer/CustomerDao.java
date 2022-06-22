@@ -20,14 +20,24 @@ public class CustomerDao {
         Statement selectStmt = connection.createStatement();
         ResultSet resultSet = selectStmt.executeQuery("select * from customer;");
         List<Customer> customers = new LinkedList<>();
-        while (resultSet.next()) {
-            customers.add(new Customer(resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("nip_number")));
+        try {
+            while (resultSet.next()) {
+                customers.add(new Customer(resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("nip_number")));
+
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                resultSet.close();
+                selectStmt.close();
+                return customers;
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
         }
-        resultSet.close();
-        selectStmt.close();
-        return customers;
         // TODO try catch to add
     }
 
