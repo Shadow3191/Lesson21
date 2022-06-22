@@ -47,7 +47,7 @@ public class Main {
         Connection connection;
 
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=patryk&password=patryk");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=root&password=Patryk");
 
             do {
 //                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
