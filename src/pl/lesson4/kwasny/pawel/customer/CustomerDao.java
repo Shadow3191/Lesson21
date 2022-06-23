@@ -25,7 +25,6 @@ public class CustomerDao {
                 customers.add(new Customer(resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getString("nip_number")));
-
             }
         } catch (SQLException sqlException) {
             throw new DatabaseException(sqlException.getMessage(), sqlException);
@@ -38,7 +37,6 @@ public class CustomerDao {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
-        // TODO try catch to add
     }
 
     public void add(Customer customer) {
