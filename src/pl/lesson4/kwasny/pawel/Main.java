@@ -97,8 +97,10 @@ public class Main {
                 } else if (choose == 2) {
                     customerService.add(userIO.prepareCustomerToAdd());
                 } else if (choose == 3) {
+                    userIO.showCustomers(customerService.find());
                     customerService.edit(userIO.editCustomer());
                 } else if (choose == 4) {
+                    userIO.showCustomers(customerService.find());
                     customerService.delete(userIO.deleteCustomer());
                 } else if (choose == 5) {
                     break;
@@ -123,6 +125,7 @@ public class Main {
                 } else if (choose == 3) {
                     invoiceService.edit(userIO.editInvoice());
                 } else if (choose == 4) {
+
                     invoiceService.delete(userIO.deleteInvoice());
                 } else if (choose == 5) {
                     break;
