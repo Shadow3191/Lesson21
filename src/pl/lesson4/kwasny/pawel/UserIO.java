@@ -15,6 +15,7 @@ public class UserIO {
     private Scanner scanner = new Scanner(System.in);
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("[A-Za-z]*");
+    private Pattern correctNipPattern = Pattern.compile("^\\d{13}$");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -122,10 +123,12 @@ public class UserIO {
         }
         System.out.println();
     }
+// TODO zrobic tutaj całę product aby dobrze działało i przedewszystkim na początku dodac regexa na ean 13 cyfr
 
     public Product addProduct() {
         System.out.println("Enter ean code :");
         String ean = scanner.nextLine();
+
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
         System.out.println("Enter net price :");
