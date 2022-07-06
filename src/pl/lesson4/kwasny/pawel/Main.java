@@ -76,6 +76,7 @@ public class Main {
                 } else if (choose == 3) {
                     productService.edit(userIO.editProduct(productService.find()));
                 } else if (choose == 4) {
+                    userIO.showProduct(productService.find());
                     productService.delete(userIO.deleteProduct());
                 } else if (choose == 5) {
                     break;
@@ -118,14 +119,17 @@ public class Main {
             choose = scanner.nextInt();
             do {
                 InvoiceService invoiceService = new InvoiceService(connection);
+                CustomerService customerService = new CustomerService(connection); //TODO czy to tak moze byc czy jest lepszy sposob
                 if (choose == 1) {
                     userIO.showInvoices(invoiceService.find());
                 } else if (choose == 2) {
+                    userIO.showCustomers(customerService.find());
                     invoiceService.add(userIO.addInvoice());
                 } else if (choose == 3) {
+                    userIO.showInvoices(invoiceService.find());
                     invoiceService.edit(userIO.editInvoice());
                 } else if (choose == 4) {
-
+                    userIO.showInvoices(invoiceService.find());
                     invoiceService.delete(userIO.deleteInvoice());
                 } else if (choose == 5) {
                     break;
@@ -141,14 +145,22 @@ public class Main {
             System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
             choose = scanner.nextInt();
             InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
+            ProductService productService = new ProductService(connection);
+            InvoiceService invoiceService = new InvoiceService(connection);
             do {
                 if (choose == 1) {
                     userIO.showInvoiceItem(invoiceItemService.find());
                 } else if (choose == 2) {
+                    userIO.showProduct(productService.find());
+                    userIO.showInvoices(invoiceService.find());
                     invoiceItemService.add(userIO.addInvoiceItem());
                 } else if (choose == 3) {
+                    userIO.showInvoiceItem(invoiceItemService.find());
+                    userIO.showProduct(productService.find());
+                    userIO.showInvoices(invoiceService.find());
                     invoiceItemService.edit(userIO.editInvoiceItem());
                 } else if (choose == 4) {
+                    userIO.showInvoiceItem(invoiceItemService.find());
                     invoiceItemService.delete(userIO.deleteInvoiceItem());
                 } else if (choose == 5) {
                     break;

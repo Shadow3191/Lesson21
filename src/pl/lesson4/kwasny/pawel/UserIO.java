@@ -2,6 +2,7 @@ package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
+import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
 
@@ -15,7 +16,7 @@ public class UserIO {
     private Scanner scanner = new Scanner(System.in);
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("[A-Za-z]*");
-    private Pattern correctNipPattern = Pattern.compile("^\\d{13}$");
+    private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -46,7 +47,6 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
-    // TODO ogarnac jak powinny dzialac te wyrazenia reguladne
     public int editId() {
         boolean goNext;
         int id = 0;
@@ -123,11 +123,18 @@ public class UserIO {
         }
         System.out.println();
     }
-// TODO zrobic tutaj całę product aby dobrze działało i przedewszystkim na początku dodac regexa na ean 13 cyfr
 
     public Product addProduct() {
-        System.out.println("Enter ean code :");
-        String ean = scanner.nextLine();
+        System.out.println("Enter the 13-digit EAN code :");
+        String eanCode = scanner.nextLine();
+        Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+        do {
+            if (!correctEanCode) {
+                System.out.println("You must enter 13-digit code !");
+                eanCode = scanner.nextLine();
+                correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+            }
+        } while (!correctEanCode);
 
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
@@ -137,16 +144,30 @@ public class UserIO {
         BigDecimal taxPercent = scanner.nextBigDecimal();
         scanner.nextLine();
         System.out.println();
-        return new Product(ean, name, netPrice, taxPercent);
+        return new Product(eanCode, name, netPrice, taxPercent);
+    }
+
+    private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
+        return correctEanPattern.matcher(eanCode).matches();
     }
 
     public Product editProduct(List<Product> products) {
         showProduct(products);
         System.out.println("Enter the id number you want to edit ");
         int id = scanner.nextInt();
-        System.out.println("Enter ean code :");
+        System.out.println("Enter the 13-digit EAN code :");
         scanner.nextLine();
-        String ean = scanner.nextLine();
+        String eanCode = scanner.nextLine();
+        Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+        do {
+            if (!correctEanCode) {
+                System.out.println("You must enter 13-digit code !");
+                eanCode = scanner.nextLine();
+                correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+            }
+        } while (!correctEanCode);
+
+
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
         System.out.println("Enter net price :");
@@ -154,7 +175,7 @@ public class UserIO {
         System.out.println("Enter tax percent :");
         BigDecimal taxPercent = scanner.nextBigDecimal();
         System.out.println();
-        return new Product(id, ean, name, netPrice, taxPercent);
+        return new Product(id, eanCode, name, netPrice, taxPercent);
     }
 
     public Product deleteProduct() {
@@ -179,7 +200,7 @@ public class UserIO {
     public Invoice addInvoice() {
         System.out.println("Enter invoice number :");
         String number = scanner.nextLine();
-        System.out.println("Enter customer id :");
+        System.out.println("Enter the customer id from the list above :");
         int customerId = scanner.nextInt();
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
@@ -214,9 +235,9 @@ public class UserIO {
     }
 
     public InvoiceItem addInvoiceItem() {
-        System.out.println("Enter the product id :");
+        System.out.println("Enter the product id from the list above:");
         int productId = scanner.nextInt();
-        System.out.println("Enter the invoice id :");
+        System.out.println("Enter the invoice id from the list above :");
         int invoiceId = scanner.nextInt();
         System.out.println("Enter the product quantity :");
         int quantity = scanner.nextInt();
@@ -232,18 +253,16 @@ public class UserIO {
     }
 
     public InvoiceItem editInvoiceItem() {
-
-        System.out.println("Enter id from invoice item what you want to edit :");
+        System.out.println("Enter id from invoice item what you want to edit from the list above:");
         int id = scanner.nextInt();
-        System.out.println("Enter product id who you want to edit :");
+        System.out.println("Enter product id who you want to edit from the list above:");
         int productId = scanner.nextInt();
-        System.out.println("Enter invoice id tho you want to edit :");
+        System.out.println("Enter invoice id who you want to edit from the list above:");
         int invoiceId = scanner.nextInt();
         System.out.println("Enter quantity :");
         int quantity = scanner.nextInt();
         System.out.println("Enter product name :");
         scanner.nextLine();
-        scanner.nextBigDecimal();
         String productName = scanner.nextLine();
         System.out.println("Enter net price :");
         BigDecimal netPrice = scanner.nextBigDecimal();
@@ -261,3 +280,4 @@ public class UserIO {
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem
+// TODO PRODUCK I CUSTOMER ZROBIONE POPRAWNIE (MOZNA SPRAWDZIC JESZCZE CO W PRODUCT DA SIE ZROBIC LEPIEJ Z OBSLUGA NIPU)
