@@ -2,7 +2,6 @@ package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
-import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
 
@@ -17,6 +16,7 @@ public class UserIO {
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("[A-Za-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
+    private Pattern correctNetPricePattern = Pattern.compile("^\\d+");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -115,8 +115,13 @@ public class UserIO {
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
-            System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
-                    product.getNetPrice() + " | " + product.getTaxPercent());
+//            System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
+//                    product.getNetPrice() + " | " + product.getTaxPercent());
+            // TODO DODANE FORMATOWANIE TEKSTU
+            System.out.format("%3s| %13s| %19s| %6s| %6s|",product.getId(), product.getEanCode(), product.getName(),
+                    product.getNetPrice(), product.getTaxPercent());
+            System.out.println();
+//
         }
         if (products != null && products.isEmpty()) {
             System.out.println("This database is empty - don't have added any position\n");
@@ -130,25 +135,96 @@ public class UserIO {
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
         do {
             if (!correctEanCode) {
-                System.out.println("You must enter 13-digit code !");
-                eanCode = scanner.nextLine();
-                correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+                try {
+                    System.out.println("You must enter 13-digit code !");
+                    eanCode = scanner.nextLine();
+                    correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+                } catch (Exception exception) {
+                    System.out.println("This EAN code already exists in the database, enter the new code :");
+                }
             }
         } while (!correctEanCode);
 
+        // TODO ZABESPIECZYć ZEBY NIE MOZNA BYLO DODAC PUSTEJ NAZWY !!!!!!!!!!!
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
-        System.out.println("Enter net price :");
-        BigDecimal netPrice = scanner.nextBigDecimal();
-        System.out.println("Enter tax percent :");
-        BigDecimal taxPercent = scanner.nextBigDecimal();
-        scanner.nextLine();
+
+//        System.out.println("Enter net price :");
+        BigDecimal netPrice = null;
+        int helpPoint = 0;
+        while (helpPoint != 1) {
+            helpPoint = 1;
+            System.out.println("Enter product price :");
+            try {
+                netPrice = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It isn't a price ! Enter correct price.");
+                helpPoint = 0;
+                scanner.nextLine();
+                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+            }
+//            catch (SQLException sqlException){
+//                throw new DatabaseException(sqlException.getMessage(), sqlException);
+//            }
+        }
+
+
+//        BigDecimal netPrice = scanner.nextBigDecimal();
+//        Boolean correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
+//        do {
+//            if (!correctNetPrice) {
+//                try {
+//                    System.out.println("You must enter price !");
+//                    BigDecimal netPrice = scanner.nextBigDecimal();
+//                    correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
+//                } catch (Exception exception) {
+//                    System.out.println("It isn't a price ! Enter correct price.");
+//                }
+//            }
+//        } while (!correctNetPrice);
+//        do {
+//            if(helpPoint != 1) {
+//                helpPoint = 1;
+//                System.out.println("Podaj poprawną cenę.");
+////                netPrice = scanner.nextBigDecimal();
+//                try {
+////                    System.out.println("Podaj poprawną cenę.");
+//                    netPrice = scanner.nextBigDecimal();
+//                   scanner.nextBigDecimal();
+//                } catch (Exception exception) {
+//                    System.out.println("To nie jest cena głąbie");
+//                    helpPoint = 0;
+//                }
+//            }
+//       }while (helpPoint != 1);
+
+//        System.out.println("Enter tax percent :");
+        BigDecimal taxPercent = null;
+        int helpPointTax = 0;
+        while (helpPointTax != 1) {
+            helpPointTax = 1;
+            System.out.println("Enter tax percent :");
+
+            try {
+                taxPercent = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It isn't a tax percent, enter correct value !");
+                helpPointTax = 0;
+            }
+            scanner.nextLine();
+        }
         System.out.println();
+
         return new Product(eanCode, name, netPrice, taxPercent);
     }
 
     private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
         return correctEanPattern.matcher(eanCode).matches();
+    }
+
+    // TODO dlaczego tutaj trzeba dać CharSequence przy BigDecimalu i czy da sie to patternem obskoczyć ?
+    private boolean isCorrectNetPrice(BigDecimal netPrice, Pattern correctNetPrice) {
+        return correctNetPrice.matcher((CharSequence) netPrice).matches();
     }
 
     public Product editProduct(List<Product> products) {
