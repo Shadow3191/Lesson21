@@ -2,7 +2,6 @@ package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
-import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
 
@@ -17,6 +16,7 @@ public class UserIO {
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("[A-Za-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
+    private Pattern correctNetPricePattern = Pattern.compile("^\\d+");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -115,8 +115,13 @@ public class UserIO {
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
-            System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
-                    product.getNetPrice() + " | " + product.getTaxPercent());
+//            System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
+//                    product.getNetPrice() + " | " + product.getTaxPercent());
+            // TODO DODANE FORMATOWANIE TEKSTU
+            System.out.format("%3s| %13s| %19s| %6s| %6s|", product.getId(), product.getEanCode(), product.getName(),
+                    product.getNetPrice(), product.getTaxPercent());
+            System.out.println();
+//
         }
         if (products != null && products.isEmpty()) {
             System.out.println("This database is empty - don't have added any position\n");
@@ -124,26 +129,100 @@ public class UserIO {
         System.out.println();
     }
 
-    public Product addProduct() {
+    public Product prepareProductToAdd() {
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
         do {
             if (!correctEanCode) {
-                System.out.println("You must enter 13-digit code !");
-                eanCode = scanner.nextLine();
-                correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+                try {
+                    System.out.println("You must enter 13-digit code !");
+                    eanCode = scanner.nextLine();
+                    correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+                } catch (Exception exception) {
+                    System.out.println("This EAN code already exists in the database, enter the new code :");
+                }
             }
         } while (!correctEanCode);
 
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
-        System.out.println("Enter net price :");
-        BigDecimal netPrice = scanner.nextBigDecimal();
-        System.out.println("Enter tax percent :");
-        BigDecimal taxPercent = scanner.nextBigDecimal();
-        scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println("Name can't be null, wright product name :");
+            name = scanner.nextLine();
+        }
+
+
+        BigDecimal netPrice = null;
+        int helpPoint = 0;
+        System.out.println("Enter product price :");
+        while (helpPoint != 1) {
+            helpPoint = 1;
+            try {
+                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
+                netPrice = scanner.nextBigDecimal();
+//                if (netPrice == null) {
+//                    System.out.println("Price can't be null! Write the price :");
+//                    netPrice = scanner.nextBigDecimal();
+//                }
+            } catch (Exception exception) {
+                System.out.println("It isn't a price ! Enter correct price :");
+                helpPoint = 0;
+                scanner.nextLine();
+                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+            }
+//            catch (SQLException sqlException){
+//                throw new DatabaseException(sqlException.getMessage(), sqlException);
+//            }
+        }
+
+
+//        BigDecimal netPrice = scanner.nextBigDecimal();
+//        Boolean correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
+//        do {
+//            if (!correctNetPrice) {
+//                try {
+//                    System.out.println("You must enter price !");
+//                    BigDecimal netPrice = scanner.nextBigDecimal();
+//                    correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
+//                } catch (Exception exception) {
+//                    System.out.println("It isn't a price ! Enter correct price.");
+//                }
+//            }
+//        } while (!correctNetPrice);
+//        do {
+//            if(helpPoint != 1) {
+//                helpPoint = 1;
+//                System.out.println("Podaj poprawną cenę.");
+////                netPrice = scanner.nextBigDecimal();
+//                try {
+////                    System.out.println("Podaj poprawną cenę.");
+//                    netPrice = scanner.nextBigDecimal();
+//                   scanner.nextBigDecimal();
+//                } catch (Exception exception) {
+//                    System.out.println("To nie jest cena głąbie");
+//                    helpPoint = 0;
+//                }
+//            }
+//       }while (helpPoint != 1);
+
+//        System.out.println("Enter tax percent :");
+        BigDecimal taxPercent = null;
+        int helpPointTax = 0;
+        while (helpPointTax != 1) {
+            helpPointTax = 1;
+            System.out.println("Enter tax percent :");
+
+            try {
+                taxPercent = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It isn't a tax percent, enter correct value !");
+                helpPointTax = 0;
+            }
+            scanner.nextLine();
+        }
         System.out.println();
+
         return new Product(eanCode, name, netPrice, taxPercent);
     }
 
@@ -151,12 +230,29 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
+    // TODO dlaczego tutaj trzeba dać CharSequence przy BigDecimalu i czy da sie to patternem obskoczyć ?
+    private boolean isCorrectNetPrice(BigDecimal netPrice, Pattern correctNetPrice) {
+        return correctNetPrice.matcher((CharSequence) netPrice).matches();
+    }
+
     public Product editProduct(List<Product> products) {
         showProduct(products);
-        System.out.println("Enter the id number you want to edit ");
-        int id = scanner.nextInt();
+        int id = 0;
+        int helpPoint = 0;
+        while (helpPoint != 1) {
+            System.out.println("Enter the id number you want to edit :");
+            helpPoint = 1;
+            try {
+                id = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("Id number isn't correct.");
+                helpPoint = 0;
+            }
+            scanner.nextLine();
+        }
+
+
         System.out.println("Enter the 13-digit EAN code :");
-        scanner.nextLine();
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
         do {
@@ -170,20 +266,72 @@ public class UserIO {
 
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println("Name can't be null, wright product name :");
+            name = scanner.nextLine();
+        }
+
+//        System.out.println("Enter net price :");
+        BigDecimal netPrice = null;
+        int helpPoint1 = 0;
         System.out.println("Enter net price :");
-        BigDecimal netPrice = scanner.nextBigDecimal();
-        System.out.println("Enter tax percent :");
-        BigDecimal taxPercent = scanner.nextBigDecimal();
+        while (helpPoint1 != 1) {
+            helpPoint1 = 1;
+            try {
+                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
+                netPrice = scanner.nextBigDecimal();
+//                if (netPrice == null) {
+//                    System.out.println("Price can't be null! Write the price :");
+//                    netPrice = scanner.nextBigDecimal();
+//                }
+            } catch (Exception exception) {
+                System.out.println("It isn't a price ! Enter correct price :");
+                helpPoint1 = 0;
+                scanner.nextLine();
+                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+            }
+        }
+
+
+//        System.out.println("Enter tax percent :");
+        BigDecimal taxPercent = null;
+        int helpPointTax = 0;
+        while (helpPointTax != 1) {
+            helpPointTax = 1;
+            System.out.println("Enter tax percent :");
+
+            try {
+                taxPercent = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It isn't a tax percent, enter correct value !");
+                helpPointTax = 0;
+            }
+            scanner.nextLine();
+        }
+
+
         System.out.println();
         return new Product(id, eanCode, name, netPrice, taxPercent);
     }
 
     public Product deleteProduct() {
-        System.out.println("Enter the product id number to be removed from the database: ");
-        int id = scanner.nextInt();
-        System.out.println("You delete id number : " + id);
-        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
-    }
+        int id = 0;
+        int helpPoint = 0;
+       while (helpPoint != 1) {
+           System.out.println("Enter the product id number to be removed from the database: ");
+           try {
+               id = scanner.nextInt();
+               helpPoint = 1;
+           } catch (Exception exception) {
+               System.out.println("Your value isn't a number !");
+               helpPoint = 0;
+           }
+           scanner.nextLine();
+       }
+           System.out.println("You delete id number : " + id + "\n");
+           return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+       }
+
 
     public void showInvoices(List<Invoice> invoices) {
         for (Invoice invoice : invoices) {
