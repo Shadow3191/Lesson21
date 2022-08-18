@@ -72,7 +72,7 @@ public class Main {
                 if (choose == 1) {
                     userIO.showProduct(productService.find());
                 } else if (choose == 2) {
-                    productService.add(userIO.addProduct());
+                    productService.add(userIO.prepareProductToAdd());
                 } else if (choose == 3) {
                     productService.edit(userIO.editProduct(productService.find()));
                 } else if (choose == 4) {

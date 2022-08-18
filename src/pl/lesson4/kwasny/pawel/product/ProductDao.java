@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel.product;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
-import pl.lesson4.kwasny.pawel.invoice.Invoice;
 
 import java.sql.*;
 import java.util.LinkedList;
