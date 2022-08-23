@@ -12,11 +12,16 @@ public class ProductService {
     }
 
     public List<Product> find() throws SQLException {
+
         return productDao.find();
     }
 
-    public void add(Product product) {
-        productDao.add(product);
+    public void add(Product product) throws SQLException {
+        try {
+            productDao.add(product);
+        } catch (SQLException sqlException){
+            throw sqlException;
+        }
     }
 
     public void edit(Product product) {

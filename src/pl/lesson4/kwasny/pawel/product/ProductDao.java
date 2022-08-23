@@ -32,7 +32,7 @@ public class ProductDao {
         return products;
     }
 
-    public void add(Product product) {
+    public void add(Product product) throws SQLException {
         sql = "insert into product(ean_code, name, price_net, tax_percent) values (?, ?, ?, ?);";
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -42,7 +42,7 @@ public class ProductDao {
             preparedStatement.setBigDecimal(4, product.getTaxPercent());
             preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
-            throw new DatabaseException(sqlException.getMessage(), sqlException);
+            throw sqlException;
         } finally {
             try {
                 preparedStatement.close();

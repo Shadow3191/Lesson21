@@ -23,6 +23,7 @@ Program do rejestrowania FV obejmujacy 3 rzeczy :
 - NIP
  */
 
+import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
@@ -72,7 +73,21 @@ public class Main {
                 if (choose == 1) {
                     userIO.showProduct(productService.find());
                 } else if (choose == 2) {
-                    productService.add(userIO.prepareProductToAdd());
+                    boolean error;
+                    do {
+                        error = false;
+                        try {
+                            productService.add(userIO.prepareProductToAdd());
+                        } catch (SQLException sqlException) {
+                            if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
+                                System.out.println("This ean code already exists in the database.");
+                                error = true;
+                            } else {
+                                System.out.println("database write error!");
+                            }
+                        }
+                    } while (error == true);
+
                 } else if (choose == 3) {
                     productService.edit(userIO.editProduct(productService.find()));
                 } else if (choose == 4) {
