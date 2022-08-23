@@ -344,8 +344,8 @@ public class UserIO {
 
     public void showInvoices(List<Invoice> invoices) {
         for (Invoice invoice : invoices) {
-            System.out.println(invoice.getId() + " | " + invoice.getNumber() + " | " + invoice.getCustomerID() + " | "
-                    + invoice.getPriceNetSum() + " | " + invoice.getPriceGossSum());
+            System.out.format("%3s| %15s| %3s| %5s| %5s|", invoice.getId(), invoice.getNumber(), invoice.getCustomerID(), invoice.getPriceNetSum(), invoice.getPriceGossSum());
+            System.out.println();
         }
         if (invoices != null && invoices.isEmpty()) {
             System.out.println("This database is empty - don't have added any position.\n");
@@ -364,12 +364,36 @@ public class UserIO {
 
     public Invoice editInvoice() {
         System.out.println("Enter id number of invoice who you want to edit :");
-        int id = scanner.nextInt();
+        int id = 0;
+        boolean helpPoint;
+        do {
+            helpPoint = false;
+            try {
+                id = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("You must enter a number! Enter correct number:");
+                helpPoint = true;
+                scanner.nextLine();
+            }
+        } while (helpPoint == true);
+
         System.out.println("Enter the invoice number :");
         scanner.nextLine();
         String number = scanner.nextLine();
+
         System.out.println("Enter customer id :");
-        int customerId = scanner.nextInt();
+        int customerId = 0;
+        boolean helpPoint2 = false;
+        do {
+            try {
+                customerId = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("You must enter a number! Enter correct number:");
+                helpPoint2 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint2 == true);
+        System.out.println();
         return new Invoice(id, number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
