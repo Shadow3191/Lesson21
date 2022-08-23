@@ -1,14 +1,11 @@
 package pl.lesson4.kwasny.pawel;
 
-import com.sun.xml.internal.ws.policy.EffectiveAlternativeSelector;
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
-import sun.plugin2.gluegen.runtime.StructAccessor;
 
 import java.math.BigDecimal;
-import java.sql.Struct;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
