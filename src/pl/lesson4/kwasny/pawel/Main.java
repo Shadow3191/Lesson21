@@ -65,7 +65,19 @@ public class Main {
     private static void runOperation(Scanner scanner, Connection connection) throws SQLException {
         UserIO userIO = new UserIO();
         System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
-        int choose = scanner.nextInt();
+        int choose = 0;
+        boolean heloPoint = false;
+        do {
+            heloPoint = false;
+            try {
+                choose = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct number :");
+                heloPoint = true;
+            }
+            scanner.nextLine();
+        } while (heloPoint == true);
+
         if (choose == 1) {
             choose = 0;
             do {
