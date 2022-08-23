@@ -21,7 +21,8 @@ public class UserIO {
 
     public void showCustomers(List<Customer> customers) {
         for (Customer customer : customers) {
-            System.out.println(customer.getId() + " | " + customer.getName() + " | " + customer.getNipNumber());
+            System.out.format("%3s| %20s| %14s|", customer.getId(), customer.getName(), customer.getNipNumber());
+            System.out.println();
         }
         if (customers != null && customers.isEmpty()) {
             System.out.println("This database is empty - don't have added any position\n");
@@ -33,6 +34,10 @@ public class UserIO {
     public Customer prepareCustomerToAdd() {
         System.out.println("Enter the name of customer :");
         String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println("Name can't be null, wright product name :");
+            name = scanner.nextLine();
+        }
         System.out.println("Enter customer nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
@@ -67,6 +72,10 @@ public class UserIO {
     public String editName() {
         System.out.println("Enter name :");
         String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println("Name can't be null, wright product name :");
+            name = scanner.nextLine();
+        }
         Boolean correctName = isCorrectValue(name, namePattern);
         while (!correctName) {
             if (correctName) {
@@ -317,20 +326,20 @@ public class UserIO {
     public Product deleteProduct() {
         int id = 0;
         int helpPoint = 0;
-       while (helpPoint != 1) {
-           System.out.println("Enter the product id number to be removed from the database: ");
-           try {
-               id = scanner.nextInt();
-               helpPoint = 1;
-           } catch (Exception exception) {
-               System.out.println("Your value isn't a number !");
-               helpPoint = 0;
-           }
-           scanner.nextLine();
-       }
-           System.out.println("You delete id number : " + id + "\n");
-           return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
-       }
+        while (helpPoint != 1) {
+            System.out.println("Enter the product id number to be removed from the database: ");
+            try {
+                id = scanner.nextInt();
+                helpPoint = 1;
+            } catch (Exception exception) {
+                System.out.println("Your value isn't a number !");
+                helpPoint = 0;
+            }
+            scanner.nextLine();
+        }
+        System.out.println("You delete id number : " + id + "\n");
+        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+    }
 
 
     public void showInvoices(List<Invoice> invoices) {
