@@ -66,137 +66,186 @@ public class Main {
         UserIO userIO = new UserIO();
         System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
         int choose = 0;
-        boolean heloPoint = false;
+        boolean helpPoint = false;
         do {
-            heloPoint = false;
+            helpPoint = false;
             try {
                 choose = scanner.nextInt();
             } catch (Exception exception) {
                 System.out.println("It's not a number! Enter correct number :");
-                heloPoint = true;
+                helpPoint = true;
+            }
+            if (choose < 0 || choose > 4 && choose != 9) {
+                System.out.println("It's incorrect number ! Enter correct number :\n");
             }
             scanner.nextLine();
-        } while (heloPoint == true);
+        } while (helpPoint == true);
 
-        if (choose == 1) {
-            choose = 0;
-            do {
-                ProductService productService = new ProductService(connection);
-                if (choose == 1) {
-                    userIO.showProduct(productService.find());
-                } else if (choose == 2) {
-                    boolean error;
-                    do {
-                        error = false;
-                        try {
-                            productService.add(userIO.prepareProductToAdd());
-                        } catch (SQLException sqlException) {
-                            if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
-                                System.out.println("This ean code already exists in the database.");
-                                error = true;
-                            } else {
-                                System.out.println("database write error!");
-                            }
+
+            if (choose == 1) {
+                helpPoint = false;
+                do {
+                    helpPoint = false;
+                    try {
+                        choose = 0;
+                    } catch (Exception exception) {
+                        System.out.println("It's not a number! Enter correct number :");
+                        helpPoint = true;
+                    }
+                } while (helpPoint == true);
+
+                do {
+                    try {
+                        ProductService productService = new ProductService(connection);
+                        if (choose == 1) {
+                            userIO.showProduct(productService.find());
+                        } else if (choose == 2) {
+                            boolean error;
+                            do {
+                                error = false;
+                                try {
+                                    productService.add(userIO.prepareProductToAdd());
+                                } catch (SQLException sqlException) {
+                                    if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
+                                        System.out.println("This ean code already exists in the database.");
+                                        error = true;
+                                    } else {
+                                        System.out.println("database write error!");
+                                    }
+                                }
+                            } while (error == true);
+
+                        } else if (choose == 3) {
+                            productService.edit(userIO.editProduct(productService.find()));
+                        } else if (choose == 4) {
+                            userIO.showProduct(productService.find());
+                            productService.delete(userIO.deleteProduct());
+                        } else if (choose == 5) {
+                            break;
+                        } else if (choose == 9) {
+                            System.out.println("You close program, see you next time !");
+                            System.exit(0);
                         }
-                    } while (error == true);
+                        System.out.println("What you want to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                        choose = scanner.nextInt();
+                    } catch (Exception exception) {
+                        System.out.println("This is not a correct number, please try again:\n");
+                    }
+                    if (choose < 0 || choose > 4 && choose != 9) {
+                        System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
+                    }
+                    scanner.nextLine();
+                } while (choose != 9);
+            }
 
-                } else if (choose == 3) {
-                    productService.edit(userIO.editProduct(productService.find()));
-                } else if (choose == 4) {
-                    userIO.showProduct(productService.find());
-                    productService.delete(userIO.deleteProduct());
-                } else if (choose == 5) {
-                    break;
-                } else if (choose == 9) {
-                    System.out.println("You close program, see you next time !");
-                    System.exit(0);
-                }
-                System.out.println("What you want to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
-                choose = scanner.nextInt();
-            } while (choose != 9);
-        }
 
         if (choose == 2) {
             choose = 0;
             do {
-                CustomerService customerService = new CustomerService(connection);
-                if (choose == 1) {
-                    userIO.showCustomers(customerService.find());
-                } else if (choose == 2) {
-                    customerService.add(userIO.prepareCustomerToAdd());
-                } else if (choose == 3) {
-                    userIO.showCustomers(customerService.find());
-                    customerService.edit(userIO.editCustomer());
-                } else if (choose == 4) {
-                    userIO.showCustomers(customerService.find());
-                    customerService.delete(userIO.deleteCustomer());
-                } else if (choose == 5) {
-                    break;
-                } else if (choose == 9) {
-                    System.out.println("You close program, see you next time !");
-                    System.exit(0);
+                try {
+                    CustomerService customerService = new CustomerService(connection);
+                    if (choose == 1) {
+                        userIO.showCustomers(customerService.find());
+                    } else if (choose == 2) {
+                        customerService.add(userIO.prepareCustomerToAdd());
+                    } else if (choose == 3) {
+                        userIO.showCustomers(customerService.find());
+                        customerService.edit(userIO.editCustomer());
+                    } else if (choose == 4) {
+                        userIO.showCustomers(customerService.find());
+                        customerService.delete(userIO.deleteCustomer());
+                    } else if (choose == 5) {
+                        break;
+                    } else if (choose == 9) {
+                        System.out.println("You close program, see you next time !");
+                        System.exit(0);
+                    }
+                    System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
+                    choose = scanner.nextInt();
+                } catch (Exception exception) {
+                    System.out.println("This is not a correct number, please try again:\n");
                 }
-                System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
-                choose = scanner.nextInt();
+                if (choose < 0 || choose > 4 && choose != 9) {
+                    System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
+                }
+                scanner.nextLine();
             } while (choose != 9);
         }
 
         if (choose == 3) {
-            System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
-            choose = scanner.nextInt();
+            choose = 0;
+//            System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
+//            choose = scanner.nextInt();
             do {
-                InvoiceService invoiceService = new InvoiceService(connection);
-                CustomerService customerService = new CustomerService(connection); //TODO czy to tak moze byc czy jest lepszy sposob
-                if (choose == 1) {
-                    userIO.showInvoices(invoiceService.find());
-                } else if (choose == 2) {
-                    userIO.showCustomers(customerService.find());
-                    invoiceService.add(userIO.addInvoice());
-                } else if (choose == 3) {
-                    userIO.showInvoices(invoiceService.find());
-                    invoiceService.edit(userIO.editInvoice());
-                } else if (choose == 4) {
-                    userIO.showInvoices(invoiceService.find());
-                    invoiceService.delete(userIO.deleteInvoice());
-                } else if (choose == 5) {
-                    break;
-                } else if (choose == 9) {
-                    System.out.println("You close program, see you next time !");
-                    System.exit(0);
+                try {
+                    InvoiceService invoiceService = new InvoiceService(connection);
+                    CustomerService customerService = new CustomerService(connection); //TODO czy to tak moze byc czy jest lepszy sposob
+                    if (choose == 1) {
+                        userIO.showInvoices(invoiceService.find());
+                    } else if (choose == 2) {
+                        userIO.showCustomers(customerService.find());
+                        invoiceService.add(userIO.addInvoice());
+                    } else if (choose == 3) {
+                        userIO.showInvoices(invoiceService.find());
+                        invoiceService.edit(userIO.editInvoice());
+                    } else if (choose == 4) {
+                        userIO.showInvoices(invoiceService.find());
+                        invoiceService.delete(userIO.deleteInvoice());
+                    } else if (choose == 5) {
+                        break;
+                    } else if (choose == 9) {
+                        System.out.println("You close program, see you next time !");
+                        System.exit(0);
+                    }
+
+                    System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
+                    choose = scanner.nextInt();
+                } catch ( Exception exception) {
+                    System.out.println("This is not a correct number, please try again:\n");
                 }
-                System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
-                choose = scanner.nextInt();
+                if (choose < 0 || choose > 4 && choose != 9) {
+                    System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
+                }
+                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 4) {
-            System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
-            choose = scanner.nextInt();
+            choose = 0;
+
             InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
             ProductService productService = new ProductService(connection);
             InvoiceService invoiceService = new InvoiceService(connection);
             do {
-                if (choose == 1) {
-                    userIO.showInvoiceItem(invoiceItemService.find());
-                } else if (choose == 2) {
-                    userIO.showProduct(productService.find());
-                    userIO.showInvoices(invoiceService.find());
-                    invoiceItemService.add(userIO.addInvoiceItem());
-                } else if (choose == 3) {
-                    userIO.showInvoiceItem(invoiceItemService.find());
-                    userIO.showProduct(productService.find());
-                    userIO.showInvoices(invoiceService.find());
-                    invoiceItemService.edit(userIO.editInvoiceItem());
-                } else if (choose == 4) {
-                    userIO.showInvoiceItem(invoiceItemService.find());
-                    invoiceItemService.delete(userIO.deleteInvoiceItem());
-                } else if (choose == 5) {
-                    break;
-                } else if (choose == 9) {
-                    System.out.println("You close program, see you next time !");
-                    System.exit(0);
+                try {
+                    if (choose == 1) {
+                        userIO.showInvoiceItem(invoiceItemService.find());
+                    } else if (choose == 2) {
+                        userIO.showProduct(productService.find());
+                        userIO.showInvoices(invoiceService.find());
+                        invoiceItemService.add(userIO.addInvoiceItem());
+                    } else if (choose == 3) {
+                        userIO.showInvoiceItem(invoiceItemService.find());
+                        userIO.showProduct(productService.find());
+                        userIO.showInvoices(invoiceService.find());
+                        invoiceItemService.edit(userIO.editInvoiceItem());
+                    } else if (choose == 4) {
+                        userIO.showInvoiceItem(invoiceItemService.find());
+                        invoiceItemService.delete(userIO.deleteInvoiceItem());
+                    } else if (choose == 5) {
+                        break;
+                    } else if (choose == 9) {
+                        System.out.println("You close program, see you next time !");
+                        System.exit(0);
+                    }
+                    System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
+                    choose = scanner.nextInt();
+                } catch (Exception exception) {
+                    System.out.println("This is not a correct number, please try again:\n");
                 }
-                System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
-                choose = scanner.nextInt();
+                if (choose < 0 || choose > 4 && choose != 9) {
+                    System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
+                }
+                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 9) {

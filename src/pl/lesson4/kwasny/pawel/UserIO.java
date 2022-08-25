@@ -114,9 +114,22 @@ public class UserIO {
         return new Customer(id, name, nipNumber);
     }
 
+    // TODO DLACZEGO NIE MOGE USUNAC ID = 2 ?
     public Customer deleteCustomer() {
         System.out.println("Enter the customer id number to be removed from the database:");
-        int id = scanner.nextInt();
+        int id = 0;
+        boolean helpPoint = false;
+        do {
+            helpPoint = false;
+            try {
+                id = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a correct number! Enter correct id number:");
+                helpPoint = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint == true);
+
         System.out.println("You delete id number : " + id);
         return new Customer(id, null, null);
     }
@@ -324,19 +337,20 @@ public class UserIO {
     }
 
     public Product deleteProduct() {
+        System.out.println("Enter the product id number to be removed from the database:");
         int id = 0;
-        int helpPoint = 0;
-        while (helpPoint != 1) {
-            System.out.println("Enter the product id number to be removed from the database: ");
+        boolean helpPoint = false;
+        do {
             try {
                 id = scanner.nextInt();
-                helpPoint = 1;
+                helpPoint = false;
             } catch (Exception exception) {
-                System.out.println("Your value isn't a number !");
-                helpPoint = 0;
+                System.out.println("It's not a correct number! Enter correct id number:");
+                helpPoint = true;
             }
             scanner.nextLine();
-        }
+        } while (helpPoint == true);
+
         System.out.println("You delete id number : " + id + "\n");
         return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
@@ -399,11 +413,24 @@ public class UserIO {
 
     public Invoice deleteInvoice() {
         System.out.println("Enter the invoice id number to be removed from the database:");
-        int id = scanner.nextInt();
+        int id = 0;
+        boolean helpPoint = false;
+        do {
+            helpPoint = false;
+            try {
+                id = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a correct number! Enter correct invoice number:");
+                helpPoint = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint == true);
+
         System.out.println("You delete id number : " + id);
         return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
+    boolean emptyDatabase = false;
     public void showInvoiceItem(List<InvoiceItem> invoiceItems) {
         for (InvoiceItem showInvoiceItem : invoiceItems) {
             System.out.format("%3s| %3s| %3s| %3s| %20s| %7s| %7s| %7s|", showInvoiceItem.getId(), showInvoiceItem.getProductId()
@@ -414,6 +441,7 @@ public class UserIO {
         System.out.println();
         if (invoiceItems != null && invoiceItems.isEmpty()) {
             System.out.println("This database is empty - don't have added any position.\n");
+            emptyDatabase = true;
         }
     }
 
@@ -542,7 +570,7 @@ public class UserIO {
         System.out.println("Enter quantity :");
         int quantity = 0;
         boolean helpPoint4 = false;
-        do{
+        do {
             helpPoint4 = false;
             try {
                 quantity = scanner.nextInt();
@@ -587,12 +615,24 @@ public class UserIO {
         BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice).multiply(BigDecimal.valueOf(quantity));
         return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
-
+// TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?
     public InvoiceItem deleteInvoiceItem() {
-        System.out.println("Enter the invoice item id number to be removed from the database:");
-        int id = scanner.nextInt();
-        System.out.println("You delete id nr : " + id);
-        return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        int id = 0;
+        if (emptyDatabase == false) {
+            System.out.println("Enter the invoice item id number to be removed from the database:");
+            boolean helpPoint = false;
+            do {
+                helpPoint = false;
+                try {
+                    id = scanner.nextInt();
+                } catch (Exception exception) {
+                    System.out.println("It's not a correct number! Enter correct invoice item number:");
+                    helpPoint = true;
+                }
+                scanner.nextLine();
+            } while (helpPoint == true);
+        }
+            return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem
