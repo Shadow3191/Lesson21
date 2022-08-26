@@ -137,13 +137,9 @@ public class UserIO {
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
-//            System.out.println(product.getId() + " | " + product.getEanCode() + " | " + product.getName() + " | " +
-//                    product.getNetPrice() + " | " + product.getTaxPercent());
-            // TODO DODANE FORMATOWANIE TEKSTU
             System.out.format("%3s| %13s| %19s| %6s| %6s|", product.getId(), product.getEanCode(), product.getName(),
                     product.getNetPrice(), product.getTaxPercent());
             System.out.println();
-//
         }
         if (products != null && products.isEmpty()) {
             System.out.println("This database is empty - don't have added any position\n");
@@ -174,7 +170,6 @@ public class UserIO {
             name = scanner.nextLine();
         }
 
-
         BigDecimal netPrice = null;
         int helpPoint = 0;
         System.out.println("Enter product price :");
@@ -184,51 +179,16 @@ public class UserIO {
                 // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
                 netPrice = scanner.nextBigDecimal();
 //                if (netPrice == null) {
-//                    System.out.println("Price can't be null! Write the price :");
-//                    netPrice = scanner.nextBigDecimal();
+//                    System.out.println("Price can't be null!");
 //                }
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint = 0;
                 scanner.nextLine();
-                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+ // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
-//            catch (SQLException sqlException){
-//                throw new DatabaseException(sqlException.getMessage(), sqlException);
-//            }
         }
 
-
-//        BigDecimal netPrice = scanner.nextBigDecimal();
-//        Boolean correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
-//        do {
-//            if (!correctNetPrice) {
-//                try {
-//                    System.out.println("You must enter price !");
-//                    BigDecimal netPrice = scanner.nextBigDecimal();
-//                    correctNetPrice = isCorrectNetPrice(netPrice, correctNetPricePattern);
-//                } catch (Exception exception) {
-//                    System.out.println("It isn't a price ! Enter correct price.");
-//                }
-//            }
-//        } while (!correctNetPrice);
-//        do {
-//            if(helpPoint != 1) {
-//                helpPoint = 1;
-//                System.out.println("Podaj poprawną cenę.");
-////                netPrice = scanner.nextBigDecimal();
-//                try {
-////                    System.out.println("Podaj poprawną cenę.");
-//                    netPrice = scanner.nextBigDecimal();
-//                   scanner.nextBigDecimal();
-//                } catch (Exception exception) {
-//                    System.out.println("To nie jest cena głąbie");
-//                    helpPoint = 0;
-//                }
-//            }
-//       }while (helpPoint != 1);
-
-//        System.out.println("Enter tax percent :");
         BigDecimal taxPercent = null;
         int helpPointTax = 0;
         while (helpPointTax != 1) {
@@ -252,11 +212,6 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
-    // TODO dlaczego tutaj trzeba dać CharSequence przy BigDecimalu i czy da sie to patternem obskoczyć ?
-    private boolean isCorrectNetPrice(BigDecimal netPrice, Pattern correctNetPrice) {
-        return correctNetPrice.matcher((CharSequence) netPrice).matches();
-    }
-
     public Product editProduct(List<Product> products) {
         showProduct(products);
         int id = 0;
@@ -272,7 +227,6 @@ public class UserIO {
             }
             scanner.nextLine();
         }
-
 
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
@@ -293,19 +247,14 @@ public class UserIO {
             name = scanner.nextLine();
         }
 
-//        System.out.println("Enter net price :");
         BigDecimal netPrice = null;
         int helpPoint1 = 0;
         System.out.println("Enter net price :");
         while (helpPoint1 != 1) {
             helpPoint1 = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
+                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny ?
                 netPrice = scanner.nextBigDecimal();
-//                if (netPrice == null) {
-//                    System.out.println("Price can't be null! Write the price :");
-//                    netPrice = scanner.nextBigDecimal();
-//                }
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint1 = 0;
@@ -315,7 +264,6 @@ public class UserIO {
         }
 
 
-//        System.out.println("Enter tax percent :");
         BigDecimal taxPercent = null;
         int helpPointTax = 0;
         while (helpPointTax != 1) {
@@ -520,7 +468,8 @@ public class UserIO {
             scanner.nextLine();
         } while (helpPoint5 == true);
 
-        BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice).multiply(BigDecimal.valueOf(quantity));
+        BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice)
+                .multiply(BigDecimal.valueOf(quantity));
         return new InvoiceItem(productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
 
@@ -570,7 +519,7 @@ public class UserIO {
         System.out.println("Enter quantity :");
         int quantity = 0;
         boolean helpPoint4 = false;
-        do {
+        do{
             helpPoint4 = false;
             try {
                 quantity = scanner.nextInt();
@@ -612,7 +561,8 @@ public class UserIO {
             scanner.nextLine();
         } while (helpPoint6 == true);
         System.out.println();
-        BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice).multiply(BigDecimal.valueOf(quantity));
+        BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice)
+                .multiply(BigDecimal.valueOf(quantity));
         return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
 // TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?
@@ -632,8 +582,9 @@ public class UserIO {
                 scanner.nextLine();
             } while (helpPoint == true);
         }
-            return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+            return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO,
+                    BigDecimal.ZERO, BigDecimal.ZERO);
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem
-// TODO PRODUCK I CUSTOMER ZROBIONE POPRAWNIE (MOZNA SPRAWDZIC JESZCZE CO W PRODUCT DA SIE ZROBIC LEPIEJ Z OBSLUGA NIPU)
+

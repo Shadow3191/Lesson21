@@ -112,8 +112,6 @@ public class InvoiceItemDao {
             }
         }
     }
-
-
 }
 // create method whos delete invoiceItem before delete invoice
 

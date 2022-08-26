@@ -44,5 +44,4 @@ public class Invoice {
         return priceGossSum;
     }
 
-
 }

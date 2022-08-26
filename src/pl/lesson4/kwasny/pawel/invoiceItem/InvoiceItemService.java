@@ -14,7 +14,6 @@ public class InvoiceItemService {
         return invoiceItemDao.find();
     }
 
-
     public void add(InvoiceItem invoiceItem) {
         invoiceItemDao.add(invoiceItem);
     }

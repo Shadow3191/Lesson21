@@ -100,7 +100,7 @@ public class InvoiceDao {
         }
     }
 
-    // TODO poniższ metoda usuwa w powyzszej odpowiednio numer invoice item invoice id abym mogl usunac invoice
+    // poniższ metoda usuwa w powyzszej odpowiednio numer invoice item invoice id abym mogl usunac invoice
     public void deleteByInvoiceId(Invoice invoice) {
         sql = "delete from invoice_item where invoice_id = ?;";
         try {
@@ -118,5 +118,3 @@ public class InvoiceDao {
         }
     }
 }
-
-// TODO w invoice trzeba wyswietlic liste uzytkownikow zeby wiedzial jakie id ma customer zeby wiedzial co ma dodac

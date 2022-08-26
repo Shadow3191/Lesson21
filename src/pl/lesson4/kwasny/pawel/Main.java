@@ -51,7 +51,6 @@ public class Main {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/invoices?user=patryk&password=patryk");
 
             do {
-//                System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
                 runOperation(scanner, connection);
             } while (choose != 9);
 
@@ -76,7 +75,7 @@ public class Main {
                 helpPoint = true;
             }
             if (choose < 0 || choose > 4 && choose != 9) {
-                System.out.println("It's incorrect number ! Enter correct number :\n");
+                System.out.println("Enter a number from 1 - 4 or press 9 to exit the program. :\n");
             }
             scanner.nextLine();
         } while (helpPoint == true);
@@ -107,7 +106,8 @@ public class Main {
                                     productService.add(userIO.prepareProductToAdd());
                                 } catch (SQLException sqlException) {
                                     if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
-                                        System.out.println("This ean code already exists in the database.");
+                                        System.out.println("This EAN code or product name is already in the database, check " +
+                                                "the data and enter it again:");
                                         error = true;
                                     } else {
                                         System.out.println("database write error!");
@@ -126,15 +126,15 @@ public class Main {
                             System.out.println("You close program, see you next time !");
                             System.exit(0);
                         }
-                        System.out.println("What you want to do :\n1. Show products \n2. Add product \n3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                        System.out.println("What you want to do :\n1. Show products \n2. Add product \n" +
+                                "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
                         choose = scanner.nextInt();
                     } catch (Exception exception) {
-                        System.out.println("This is not a correct number, please try again:\n");
+                        System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
                     }
                     if (choose < 0 || choose > 4 && choose != 9) {
                         System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                     }
-                    scanner.nextLine();
                 } while (choose != 9);
             }
 
@@ -160,7 +160,8 @@ public class Main {
                         System.out.println("You close program, see you next time !");
                         System.exit(0);
                     }
-                    System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
+                    System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n" +
+                            "3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
                 } catch (Exception exception) {
                     System.out.println("This is not a correct number, please try again:\n");
@@ -174,8 +175,6 @@ public class Main {
 
         if (choose == 3) {
             choose = 0;
-//            System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
-//            choose = scanner.nextInt();
             do {
                 try {
                     InvoiceService invoiceService = new InvoiceService(connection);
@@ -198,7 +197,8 @@ public class Main {
                         System.exit(0);
                     }
 
-                    System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
+                    System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n" +
+                            "3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
                 } catch ( Exception exception) {
                     System.out.println("This is not a correct number, please try again:\n");
@@ -237,7 +237,8 @@ public class Main {
                         System.out.println("You close program, see you next time !");
                         System.exit(0);
                     }
-                    System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
+                    System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n" +
+                            "3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
                 } catch (Exception exception) {
                     System.out.println("This is not a correct number, please try again:\n");
