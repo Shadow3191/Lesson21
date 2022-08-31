@@ -24,10 +24,15 @@ public class UserIO {
             System.out.format("%3s| %20s| %14s|", customer.getId(), customer.getName(), customer.getNipNumber());
             System.out.println();
         }
-        if (customers != null && customers.isEmpty()) {
-            System.out.println("This database is empty - don't have added any position\n");
+//        if (customers != null && customers.isEmpty()) {
+//            System.out.println("This database is empty - don't have added any position\n");
+//        }
+//        System.out.println();
+    }
+    public void checkingEmptyItems(List<Customer> customers){
+        if (customers != null && customers.isEmpty()){
+            System.out.println("No customers have been added yet.\n");
         }
-        System.out.println();
     }
 
     // TODO change all names to correct
@@ -122,7 +127,7 @@ public class UserIO {
         return new Customer(id, name, nipNumber);
     }
 
-    // TODO DLACZEGO NIE MOGE USUNAC ID = 2 ?
+    // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
     public Customer deleteCustomer() {
         System.out.println("Enter the customer id number to be removed from the database:");
         int id = 0;

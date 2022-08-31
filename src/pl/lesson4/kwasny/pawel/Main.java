@@ -147,6 +147,7 @@ public class Main {
                     CustomerService customerService = new CustomerService(connection);
                     if (choose == 1) {
                         userIO.showCustomers(customerService.find());
+                        userIO.checkingEmptyItems(customerService.find());
                     } else if (choose == 2) {
                         customerService.add(userIO.preparaCustomerToAdd());
                     } else if (choose == 3) {

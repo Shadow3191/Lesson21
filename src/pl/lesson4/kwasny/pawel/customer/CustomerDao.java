@@ -77,7 +77,25 @@ public class CustomerDao {
     }
 
     public void delete(Customer customer) {
+        deleteInvoicesContainingTheCustomerIdToDeleted(customer);
         sql = "delete from customer where id = ?";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, customer.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
+
+    public void deleteInvoicesContainingTheCustomerIdToDeleted(Customer customer) {
+        sql = "delete from invoice where id = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, customer.getId());
