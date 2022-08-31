@@ -7,21 +7,21 @@ public class Invoice {
     private String number;
     private Integer customerID;
     private BigDecimal priceNetSum;
-    private BigDecimal priceGossSum;
+    private BigDecimal priceGrossSum;
 
-    public Invoice(Integer id, String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGossSum) {
+    public Invoice(Integer id, String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGrossSum) {
         this.id = id;
         this.number = number;
         this.customerID = customerID;
         this.priceNetSum = priceNetSum;
-        this.priceGossSum = priceGossSum;
+        this.priceGrossSum = priceGrossSum;
     }
 
-    public Invoice(String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGossSum) {
+    public Invoice(String number, Integer customerID, BigDecimal priceNetSum, BigDecimal priceGrossSum) {
         this.number = number;
         this.customerID = customerID;
         this.priceNetSum = priceNetSum;
-        this.priceGossSum = priceGossSum;
+        this.priceGrossSum = priceGrossSum;
     }
 
     public Integer getId() {
@@ -40,8 +40,8 @@ public class Invoice {
         return priceNetSum;
     }
 
-    public BigDecimal getPriceGossSum() {
-        return priceGossSum;
+    public BigDecimal getPriceGrossSum() {
+        return priceGrossSum;
     }
 
 }

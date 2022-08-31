@@ -228,7 +228,7 @@ public class Main {
                         userIO.showInvoiceItem(invoiceItemService.find());
                         userIO.showProduct(productService.find());
                         userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.edit(userIO.editInvoiceItem());
+                        invoiceItemService.edit(userIO.preparedToEditInvoiceItem());
                     } else if (choose == 4) {
                         userIO.showInvoiceItem(invoiceItemService.find());
                         invoiceItemService.delete(userIO.deleteInvoiceItem());
