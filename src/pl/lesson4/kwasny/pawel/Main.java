@@ -81,62 +81,63 @@ public class Main {
         } while (helpPoint == true);
 
 
-            if (choose == 1) {
+        if (choose == 1) {
+            helpPoint = false;
+            do {
                 helpPoint = false;
-                do {
-                    helpPoint = false;
-                    try {
-                        choose = 0;
-                    } catch (Exception exception) {
-                        System.out.println("It's not a number! Enter correct number :");
-                        helpPoint = true;
-                    }
-                } while (helpPoint == true);
+                try {
+                    choose = 0;
+                } catch (Exception exception) {
+                    System.out.println("It's not a number! Enter correct number :");
+                    helpPoint = true;
+                }
+            } while (helpPoint == true);
 
-                do {
-                    try {
-                        ProductService productService = new ProductService(connection);
-                        if (choose == 1) {
-                            userIO.showProduct(productService.find());
-                        } else if (choose == 2) {
-                            boolean error;
-                            do {
-                                error = false;
-                                try {
-                                    productService.add(userIO.prepareProductToAdd());
-                                } catch (SQLException sqlException) {
-                                    if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
-                                        System.out.println("This EAN code or product name is already in the database, check " +
-                                                "the data and enter it again:");
-                                        error = true;
-                                    } else {
-                                        System.out.println("database write error!");
-                                    }
+            do {
+                try {
+                    ProductService productService = new ProductService(connection);
+                    if (choose == 1) {
+                        userIO.showProduct(productService.find());
+                    } else if (choose == 2) {
+                        boolean error;
+                        do {
+                            error = false;
+                            try {
+                                productService.add(userIO.prepareProductToAdd());
+                            } catch (SQLException sqlException) {
+                                if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
+                                    System.out.println("This EAN code or product name is already in the database, check " +
+                                            "the data and enter it again:");
+                                    error = true;
+                                } else {
+                                    System.out.println("database write error!");
                                 }
-                            } while (error == true);
+                            }
+                        } while (error == true);
 
-                        } else if (choose == 3) {
-                            productService.edit(userIO.editProduct(productService.find()));
-                        } else if (choose == 4) {
-                            userIO.showProduct(productService.find());
-                            productService.delete(userIO.deleteProduct());
-                        } else if (choose == 5) {
-                            break;
-                        } else if (choose == 9) {
-                            System.out.println("You close program, see you next time !");
-                            System.exit(0);
-                        }
-                        System.out.println("What you want to do :\n1. Show products \n2. Add product \n" +
-                                "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
-                        choose = scanner.nextInt();
-                    } catch (Exception exception) {
-                        System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
+                    } else if (choose == 3) {
+                        userIO.showProduct(productService.find());
+                        productService.edit(userIO.prepareProductToEdit());
+                    } else if (choose == 4) {
+                        userIO.showProduct(productService.find());
+                        productService.delete(userIO.deleteProduct());
+                    } else if (choose == 5) {
+                        break;
+                    } else if (choose == 9) {
+                        System.out.println("You close program, see you next time !");
+                        System.exit(0);
                     }
-                    if (choose < 0 || choose > 4 && choose != 9) {
-                        System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
-                    }
-                } while (choose != 9);
-            }
+                    System.out.println("What you want to do :\n1. Show products \n2. Add product \n" +
+                            "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
+                    choose = scanner.nextInt();
+                } catch (Exception exception) {
+                    System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
+                }
+                if (choose < 0 || choose > 4 && choose != 9) {
+                    System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
+                }
+            } while (choose != 9);
+        }
 
 
         if (choose == 2) {
@@ -147,10 +148,10 @@ public class Main {
                     if (choose == 1) {
                         userIO.showCustomers(customerService.find());
                     } else if (choose == 2) {
-                        customerService.add(userIO.prepareCustomerToAdd());
+                        customerService.add(userIO.preparaCustomerToAdd());
                     } else if (choose == 3) {
                         userIO.showCustomers(customerService.find());
-                        customerService.edit(userIO.editCustomer());
+                        customerService.edit(userIO.prepareCustomerToEdit());
                     } else if (choose == 4) {
                         userIO.showCustomers(customerService.find());
                         customerService.delete(userIO.deleteCustomer());
@@ -186,7 +187,7 @@ public class Main {
                         invoiceService.add(userIO.addInvoice());
                     } else if (choose == 3) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.edit(userIO.editInvoice());
+                        invoiceService.edit(userIO.prepareInvoiceToEdit());
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
                         invoiceService.delete(userIO.deleteInvoice());
@@ -200,7 +201,7 @@ public class Main {
                     System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n" +
                             "3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
-                } catch ( Exception exception) {
+                } catch (Exception exception) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
@@ -222,7 +223,7 @@ public class Main {
                     } else if (choose == 2) {
                         userIO.showProduct(productService.find());
                         userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.add(userIO.addInvoiceItem());
+                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd());
                     } else if (choose == 3) {
                         userIO.showInvoiceItem(invoiceItemService.find());
                         userIO.showProduct(productService.find());

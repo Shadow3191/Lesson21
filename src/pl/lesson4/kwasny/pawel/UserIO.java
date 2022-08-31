@@ -31,28 +31,37 @@ public class UserIO {
     }
 
     // TODO change all names to correct
-    public Customer prepareCustomerToAdd() {
+    public String getTheName() {
         System.out.println("Enter the name of customer :");
         String name = scanner.nextLine();
         while (name.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             name = scanner.nextLine();
         }
+        return name;
+    }
+
+    public String getTheNipNumber() {
         System.out.println("Enter customer nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         do {
             if (!correctNipNumber) {
-                System.out.println("You must write here nip number !");
-                System.out.println("Enter nip number in configuration 3-2-2-3 :");
+                System.out.println("You must write here nip number ! Enter nip number in configuration 3-2-2-3 :");
                 nipNumber = scanner.nextLine();
                 correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
             }
         } while (!correctNipNumber);
+        return nipNumber;
+    }
+
+    public Customer preparaCustomerToAdd() {
+        String name = getTheName();
+        String nipNumber = getTheNipNumber();
         return new Customer(name, nipNumber);
     }
 
-    public int editId() {
+    public int getIdToEdit() {
         boolean goNext;
         int id = 0;
         do {
@@ -69,7 +78,7 @@ public class UserIO {
         return id;
     }
 
-    public String editName() {
+    public String getNameToEdit() {
         System.out.println("Enter name :");
         String name = scanner.nextLine();
         while (name.length() == 0) {
@@ -87,7 +96,7 @@ public class UserIO {
         return name;
     }
 
-    public String editNipNumber() {
+    public String getNipToEdit() {
         System.out.println("Enter nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
@@ -106,11 +115,10 @@ public class UserIO {
         return nipNumberPattern.matcher(nipNumber).matches();
     }
 
-
-    public Customer editCustomer() {
-        int id = editId();
-        String name = editName();
-        String nipNumber = editNipNumber();
+    public Customer prepareCustomerToEdit() {
+        int id = getIdToEdit();
+        String name = getNameToEdit();
+        String nipNumber = getNipToEdit();
         return new Customer(id, name, nipNumber);
     }
 
@@ -147,7 +155,8 @@ public class UserIO {
         System.out.println();
     }
 
-    public Product prepareProductToAdd() {
+    //    public Product prepareProductToAdd() {
+    public String getEanToAdd() {
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
@@ -162,14 +171,20 @@ public class UserIO {
                 }
             }
         } while (!correctEanCode);
+        return eanCode;
+    }
 
+    public String getProductNameToAdd() {
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
         while (name.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             name = scanner.nextLine();
         }
+        return name;
+    }
 
+    public BigDecimal getNetPriceToAdd() {
         BigDecimal netPrice = null;
         int helpPoint = 0;
         System.out.println("Enter product price :");
@@ -178,17 +193,20 @@ public class UserIO {
             try {
                 // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
                 netPrice = scanner.nextBigDecimal();
-//                if (netPrice == null) {
-//                    System.out.println("Price can't be null!");
-//                }
+                if (netPrice == null) {
+                    System.out.println("Price can't be null!");
+                }
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint = 0;
                 scanner.nextLine();
- // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
         }
+        return netPrice;
+    }
 
+    public BigDecimal getTaxPercentToAdd() {
         BigDecimal taxPercent = null;
         int helpPointTax = 0;
         while (helpPointTax != 1) {
@@ -204,7 +222,14 @@ public class UserIO {
             scanner.nextLine();
         }
         System.out.println();
+        return taxPercent;
+    }
 
+    public Product prepareProductToAdd() {
+        String eanCode = getEanToAdd();
+        String name = getProductNameToAdd();
+        BigDecimal netPrice = getNetPriceToAdd();
+        BigDecimal taxPercent = getTaxPercentToAdd();
         return new Product(eanCode, name, netPrice, taxPercent);
     }
 
@@ -212,8 +237,8 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
-    public Product editProduct(List<Product> products) {
-        showProduct(products);
+    //    public Product editProduct(List<Product> products) {
+    public int getIdToEditProduct() {
         int id = 0;
         int helpPoint = 0;
         while (helpPoint != 1) {
@@ -227,7 +252,10 @@ public class UserIO {
             }
             scanner.nextLine();
         }
+        return id;
+    }
 
+    public String getEanToEditProduct() {
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
@@ -238,15 +266,20 @@ public class UserIO {
                 correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
             }
         } while (!correctEanCode);
+        return eanCode;
+    }
 
-
+    public String getProductNameToEdit() {
         System.out.println("Enter name of product :");
         String name = scanner.nextLine();
         while (name.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             name = scanner.nextLine();
         }
+        return name;
+    }
 
+    public BigDecimal getProductNetPriceToEdit() {
         BigDecimal netPrice = null;
         int helpPoint1 = 0;
         System.out.println("Enter net price :");
@@ -262,8 +295,10 @@ public class UserIO {
                 // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
         }
+        return netPrice;
+    }
 
-
+    public BigDecimal getProductTaxPercentToEdit() {
         BigDecimal taxPercent = null;
         int helpPointTax = 0;
         while (helpPointTax != 1) {
@@ -278,9 +313,15 @@ public class UserIO {
             }
             scanner.nextLine();
         }
+        return taxPercent;
+    }
 
-
-        System.out.println();
+    public Product prepareProductToEdit() {
+        int id = getIdToEditProduct();
+        String eanCode = getEanToEditProduct();
+        String name = getProductNameToEdit();
+        BigDecimal netPrice = getProductNetPriceToEdit();
+        BigDecimal taxPercent = getProductTaxPercentToEdit();
         return new Product(id, eanCode, name, netPrice, taxPercent);
     }
 
@@ -324,7 +365,8 @@ public class UserIO {
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    public Invoice editInvoice() {
+    //    public Invoice editInvoice() {
+    public int getInvoiceIdToEdit() {
         System.out.println("Enter id number of invoice who you want to edit :");
         int id = 0;
         boolean helpPoint;
@@ -338,11 +380,17 @@ public class UserIO {
                 scanner.nextLine();
             }
         } while (helpPoint == true);
+        return id;
+    }
 
+    public String getInvoiceNumberToEdit() {
         System.out.println("Enter the invoice number :");
         scanner.nextLine();
         String number = scanner.nextLine();
+        return number;
+    }
 
+    public int getCustomerIdToInvoiceEdit() {
         System.out.println("Enter customer id :");
         int customerId = 0;
         boolean helpPoint2 = false;
@@ -355,7 +403,13 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint2 == true);
-        System.out.println();
+        return customerId;
+    }
+
+    public Invoice prepareInvoiceToEdit() {
+        int id = getInvoiceIdToEdit();
+        String number = getInvoiceNumberToEdit();
+        int customerId = getCustomerIdToInvoiceEdit();
         return new Invoice(id, number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
@@ -379,6 +433,7 @@ public class UserIO {
     }
 
     boolean emptyDatabase = false;
+
     public void showInvoiceItem(List<InvoiceItem> invoiceItems) {
         for (InvoiceItem showInvoiceItem : invoiceItems) {
             System.out.format("%3s| %3s| %3s| %3s| %20s| %7s| %7s| %7s|", showInvoiceItem.getId(), showInvoiceItem.getProductId()
@@ -393,7 +448,8 @@ public class UserIO {
         }
     }
 
-    public InvoiceItem addInvoiceItem() {
+    //    public InvoiceItem addInvoiceItem() {
+    public int getProductIdToAddInvoiceItem() {
         System.out.println("Enter the product id from the list above:");
         int productId = 0;
         boolean helpPoint = false;
@@ -407,7 +463,10 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint == true);
+        return productId;
+    }
 
+    public int getInvoiceIdToAddInvoiceItem() {
         System.out.println("Enter the invoice id from the list above :");
         int invoiceId = 0;
         boolean helpPoint2 = false;
@@ -421,7 +480,10 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint2 == true);
+        return invoiceId;
+    }
 
+    public int getProductQuantityToAddInvoiceItem() {
         System.out.println("Enter the product quantity :");
         int quantity = 0;
         boolean helpPoint3 = false;
@@ -435,14 +497,19 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint3 == true);
+        return quantity;
+    }
 
+    public String getProductNameToAddInvoiceItem() {
         System.out.println("Enter the product name :");
         String productName = scanner.nextLine();
+        return productName;
+    }
 
+    public BigDecimal getNetPriceToAddInvoiceItem() {
         System.out.println("Enter net price :");
         BigDecimal netPrice = null;
         boolean helpPoint4 = false;
-
         do {
             helpPoint4 = false;
             try {
@@ -453,7 +520,10 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint4 == true);
+        return netPrice;
+    }
 
+    public BigDecimal getTaxPercentToAddInvoiceItem() {
         System.out.println("Enter the tax percent :");
         BigDecimal taxPercent = null;
         boolean helpPoint5 = false;
@@ -467,11 +537,29 @@ public class UserIO {
             }
             scanner.nextLine();
         } while (helpPoint5 == true);
+        return taxPercent;
+    }
 
+    public BigDecimal getGrossPrice() {
+        BigDecimal netPrice = getNetPriceToAddInvoiceItem();
+        BigDecimal taxPercent = getTaxPercentToAddInvoiceItem();
+        int quantity = getProductQuantityToAddInvoiceItem();
         BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice)
                 .multiply(BigDecimal.valueOf(quantity));
+        return grossPrice;
+    }
+
+    public InvoiceItem prepareInvoiceItemToAdd() {
+        int productId = getProductIdToAddInvoiceItem();
+        int invoiceId = getInvoiceIdToAddInvoiceItem();
+        int quantity = getProductQuantityToAddInvoiceItem();
+        String productName = getProductNameToAddInvoiceItem();
+        BigDecimal netPrice = getNetPriceToAddInvoiceItem();
+        BigDecimal taxPercent = getTaxPercentToAddInvoiceItem();
+        BigDecimal grossPrice = getGrossPrice();
         return new InvoiceItem(productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
+
 
     public InvoiceItem editInvoiceItem() {
         System.out.println("Enter id from invoice item what you want to edit from the list above:");
@@ -519,7 +607,7 @@ public class UserIO {
         System.out.println("Enter quantity :");
         int quantity = 0;
         boolean helpPoint4 = false;
-        do{
+        do {
             helpPoint4 = false;
             try {
                 quantity = scanner.nextInt();
@@ -565,7 +653,8 @@ public class UserIO {
                 .multiply(BigDecimal.valueOf(quantity));
         return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
-// TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?
+
+    // TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?
     public InvoiceItem deleteInvoiceItem() {
         int id = 0;
         if (emptyDatabase == false) {
@@ -582,8 +671,8 @@ public class UserIO {
                 scanner.nextLine();
             } while (helpPoint == true);
         }
-            return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO,
-                    BigDecimal.ZERO, BigDecimal.ZERO);
+        return new InvoiceItem(id, null, null, null, null, BigDecimal.ZERO,
+                BigDecimal.ZERO, BigDecimal.ZERO);
     }
 }
 // IO input/output klasa do wejscia i wyjscia ma gadac z uzytkownikiem
