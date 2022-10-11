@@ -180,7 +180,7 @@ public class Main {
             do {
                 try {
                     InvoiceService invoiceService = new InvoiceService(connection);
-                    CustomerService customerService = new CustomerService(connection); //TODO czy to tak moze byc czy jest lepszy sposob
+                    CustomerService customerService = new CustomerService(connection);
                     if (choose == 1) {
                         userIO.showInvoices(invoiceService.find());
                     } else if (choose == 2) {

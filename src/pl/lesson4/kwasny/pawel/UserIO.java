@@ -66,9 +66,11 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
+// TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
+
     public int getIdToEdit() {
         boolean goNext;
-        int id = 0;
+        int id =0;
         do {
             System.out.println("Enter the customer id number to edit :");
             goNext = true;
@@ -77,6 +79,8 @@ public class UserIO {
             } catch (InputMismatchException exception) {
                 System.out.println("You must enter an integer.\n");
                 goNext = false;
+            } catch (Exception exception) {
+                System.out.println("You entered an invalid id number, select one of the above id numbers to edit.");
             }
             scanner.nextLine();
         } while (goNext != true);
@@ -126,7 +130,7 @@ public class UserIO {
         String nipNumber = getNipToEdit();
         return new Customer(id, name, nipNumber);
     }
-
+// TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
     // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
     public Customer deleteCustomer() {
         System.out.println("Enter the customer id number to be removed from the database:");
