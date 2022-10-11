@@ -29,8 +29,9 @@ public class UserIO {
 //        }
 //        System.out.println();
     }
-    public void checkingEmptyItems(List<Customer> customers){
-        if (customers != null && customers.isEmpty()){
+
+    public void checkingEmptyItems(List<Customer> customers) {
+        if (customers != null && customers.isEmpty()) {
             System.out.println("No customers have been added yet.\n");
         }
     }
@@ -70,7 +71,7 @@ public class UserIO {
 
     public int getIdToEdit() {
         boolean goNext;
-        int id =0;
+        int id = 0;
         do {
             System.out.println("Enter the customer id number to edit :");
             goNext = true;
@@ -87,9 +88,11 @@ public class UserIO {
         return id;
     }
 
+    // TODO dlaczego tutaj przy podaniu inta w stringu puszcza dalej ?
     public String getNameToEdit() {
         System.out.println("Enter name :");
-        String name = scanner.nextLine();
+        String name = null;
+        name = scanner.nextLine();
         while (name.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             name = scanner.nextLine();
@@ -130,7 +133,8 @@ public class UserIO {
         String nipNumber = getNipToEdit();
         return new Customer(id, name, nipNumber);
     }
-// TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
+
+    // TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
     // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
     public Customer deleteCustomer() {
         System.out.println("Enter the customer id number to be removed from the database:");
@@ -567,122 +571,122 @@ public class UserIO {
     }
 
 
-//    public InvoiceItem editInvoiceItem() {
-        public int getIdToEditInvoiceItem() {
-            System.out.println("Enter id from invoice item what you want to edit from the list above:");
-            int id = 0;
-            boolean helpPoint = false;
-            do {
-                helpPoint = false;
-                try {
-                    id = scanner.nextInt();
-                } catch (Exception exception) {
-                    System.out.println("It's not a a number ! Enter correct id invoice item number:");
-                    helpPoint = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint == true);
-            return id;
-        }
+    //    public InvoiceItem editInvoiceItem() {
+    public int getIdToEditInvoiceItem() {
+        System.out.println("Enter id from invoice item what you want to edit from the list above:");
+        int id = 0;
+        boolean helpPoint = false;
+        do {
+            helpPoint = false;
+            try {
+                id = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a a number ! Enter correct id invoice item number:");
+                helpPoint = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint == true);
+        return id;
+    }
 
-        public int getProductIdToEditInvoiceItem() {
-            System.out.println("Enter product id who you want to edit from the list above:");
-            int productId = 0;
-            boolean helpPoint2 = false;
-            do {
-                helpPoint2 = false;
-                try {
-                    productId = scanner.nextInt();
-                } catch (Exception exception) {
-                    System.out.println("It's not a number! Enter correct product id number :");
-                    helpPoint2 = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint2 == true);
-            return productId;
-        }
+    public int getProductIdToEditInvoiceItem() {
+        System.out.println("Enter product id who you want to edit from the list above:");
+        int productId = 0;
+        boolean helpPoint2 = false;
+        do {
+            helpPoint2 = false;
+            try {
+                productId = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct product id number :");
+                helpPoint2 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint2 == true);
+        return productId;
+    }
 
-        public int getInvoiceIdToEditInvoiceItem() {
-            System.out.println("Enter invoice id who you want to edit from the list above:");
-            int invoiceId = 0;
-            boolean helpPoint3 = false;
-            do {
-                helpPoint3 = false;
-                try {
-                    invoiceId = scanner.nextInt();
-                } catch (Exception exception) {
-                    System.out.println("It's not a number! Enter correct invoice id number :");
-                    helpPoint3 = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint3 == true);
-            return invoiceId;
-        }
+    public int getInvoiceIdToEditInvoiceItem() {
+        System.out.println("Enter invoice id who you want to edit from the list above:");
+        int invoiceId = 0;
+        boolean helpPoint3 = false;
+        do {
+            helpPoint3 = false;
+            try {
+                invoiceId = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct invoice id number :");
+                helpPoint3 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint3 == true);
+        return invoiceId;
+    }
 
-        public int getQuantityToEditInvoiceItem() {
-            System.out.println("Enter quantity :");
-            int quantity = 0;
-            boolean helpPoint4 = false;
-            do {
-                helpPoint4 = false;
-                try {
-                    quantity = scanner.nextInt();
-                } catch (Exception exception) {
-                    System.out.println("It's not a number! Enter correct quantity number :");
-                    helpPoint4 = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint4 == true);
-            return quantity;
-        }
+    public int getQuantityToEditInvoiceItem() {
+        System.out.println("Enter quantity :");
+        int quantity = 0;
+        boolean helpPoint4 = false;
+        do {
+            helpPoint4 = false;
+            try {
+                quantity = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct quantity number :");
+                helpPoint4 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint4 == true);
+        return quantity;
+    }
 
-        public String getProductNameToEditInvoiceItem() {
-            System.out.println("Enter product name :");
-            String productName = scanner.nextLine();
-            return productName;
-        }
+    public String getProductNameToEditInvoiceItem() {
+        System.out.println("Enter product name :");
+        String productName = scanner.nextLine();
+        return productName;
+    }
 
-        public BigDecimal getNetPriceToEditInvoiceItem() {
-            System.out.println("Enter net price :");
-            BigDecimal netPrice = null;
-            boolean helpPoint5 = false;
-            do {
-                helpPoint5 = false;
-                try {
-                    netPrice = scanner.nextBigDecimal();
-                } catch (Exception exception) {
-                    System.out.println("It's not a number! Enter correct net price:");
-                    helpPoint5 = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint5 == true);
-            return netPrice;
-        }
+    public BigDecimal getNetPriceToEditInvoiceItem() {
+        System.out.println("Enter net price :");
+        BigDecimal netPrice = null;
+        boolean helpPoint5 = false;
+        do {
+            helpPoint5 = false;
+            try {
+                netPrice = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct net price:");
+                helpPoint5 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint5 == true);
+        return netPrice;
+    }
 
-        public BigDecimal getTaxPercentToEditInvoiceItem() {
-            System.out.println("Enter tax percent :");
-            BigDecimal taxPercent = null;
-            boolean helpPoint6 = false;
-            do {
-                helpPoint6 = false;
-                try {
-                    taxPercent = scanner.nextBigDecimal();
-                } catch (Exception exception) {
-                    System.out.println("It's not a number! Enter correct tax percent:");
-                    helpPoint6 = true;
-                }
-                scanner.nextLine();
-            } while (helpPoint6 == true);
-            return taxPercent;
-        }
+    public BigDecimal getTaxPercentToEditInvoiceItem() {
+        System.out.println("Enter tax percent :");
+        BigDecimal taxPercent = null;
+        boolean helpPoint6 = false;
+        do {
+            helpPoint6 = false;
+            try {
+                taxPercent = scanner.nextBigDecimal();
+            } catch (Exception exception) {
+                System.out.println("It's not a number! Enter correct tax percent:");
+                helpPoint6 = true;
+            }
+            scanner.nextLine();
+        } while (helpPoint6 == true);
+        return taxPercent;
+    }
 
-        public BigDecimal getGrossPriceToEditInvoiceItem(BigDecimal netPrice, BigDecimal taxPercent, int quantity) {
+    public BigDecimal getGrossPriceToEditInvoiceItem(BigDecimal netPrice, BigDecimal taxPercent, int quantity) {
         BigDecimal grossPrice = netPrice.multiply(taxPercent).divide(BigDecimal.valueOf(100)).add(netPrice)
                 .multiply(BigDecimal.valueOf(quantity));
         return grossPrice;
     }
 
-        public InvoiceItem preparedToEditInvoiceItem(){
+    public InvoiceItem preparedToEditInvoiceItem() {
         int id = getIdToEditInvoiceItem();
         int productId = getProductIdToEditInvoiceItem();
         int invoiceId = getInvoiceIdToEditInvoiceItem();
@@ -692,8 +696,8 @@ public class UserIO {
         BigDecimal taxPercent = getTaxPercentToEditInvoiceItem();
         BigDecimal grossPrice = getGrossPriceToEditInvoiceItem(netPrice, taxPercent, quantity);
 
-        return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent,grossPrice);
-        }
+        return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
+    }
 
     // TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?
     public InvoiceItem deleteInvoiceItem() {
