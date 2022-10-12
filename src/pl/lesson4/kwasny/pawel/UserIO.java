@@ -36,7 +36,6 @@ public class UserIO {
         }
     }
 
-    // TODO change all names to correct
     public String getTheName() {
         System.out.println("Enter the name of customer :");
         String name = scanner.nextLine();
@@ -69,7 +68,7 @@ public class UserIO {
 
 // TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
 
-    public int getIdToEdit() {
+    public int getIdToCustomerEdit() {
         boolean goNext;
         int id = 0;
         do {
@@ -89,7 +88,7 @@ public class UserIO {
     }
 
     // TODO dlaczego tutaj przy podaniu inta w stringu puszcza dalej ?
-    public String getNameToEdit() {
+    public String getNameToCustomerEdit() {
         System.out.println("Enter name :");
         String name = null;
         name = scanner.nextLine();
@@ -108,7 +107,7 @@ public class UserIO {
         return name;
     }
 
-    public String getNipToEdit() {
+    public String getNipToCustomerEdit() {
         System.out.println("Enter nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
@@ -128,9 +127,9 @@ public class UserIO {
     }
 
     public Customer prepareCustomerToEdit() {
-        int id = getIdToEdit();
-        String name = getNameToEdit();
-        String nipNumber = getNipToEdit();
+        int id = getIdToCustomerEdit();
+        String name = getNameToCustomerEdit();
+        String nipNumber = getNipToCustomerEdit();
         return new Customer(id, name, nipNumber);
     }
 
