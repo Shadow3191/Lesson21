@@ -96,6 +96,7 @@ public class Main {
             do {
                 try {
                     ProductService productService = new ProductService(connection);
+
                     if (choose == 1) {
                         userIO.showProduct(productService.find());
                     } else if (choose == 2) {
@@ -152,7 +153,7 @@ public class Main {
                         customerService.add(userIO.preparaCustomerToAdd());
                     } else if (choose == 3) {
                         userIO.showCustomers(customerService.find());
-                        customerService.edit(userIO.prepareCustomerToEdit());
+                        customerService.edit(userIO.prepareCustomerToEdit(customerService));
                     } else if (choose == 4) {
                         userIO.showCustomers(customerService.find());
                         customerService.delete(userIO.deleteCustomer());
@@ -171,7 +172,7 @@ public class Main {
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-                scanner.nextLine();
+//                scanner.nextLine();
             } while (choose != 9);
         }
 

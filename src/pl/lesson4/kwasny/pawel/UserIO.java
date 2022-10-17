@@ -1,11 +1,14 @@
 package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
+import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -24,10 +27,7 @@ public class UserIO {
             System.out.format("%3s| %20s| %14s|", customer.getId(), customer.getName(), customer.getNipNumber());
             System.out.println();
         }
-//        if (customers != null && customers.isEmpty()) {
-//            System.out.println("This database is empty - don't have added any position\n");
-//        }
-//        System.out.println();
+        System.out.println();
     }
 
     public void checkingEmptyItems(List<Customer> customers) {
@@ -36,7 +36,7 @@ public class UserIO {
         }
     }
 
-    public String getTheName() {
+    public String getTheCustomerNameToAdd() {
         System.out.println("Enter the name of customer :");
         String name = scanner.nextLine();
         while (name.length() == 0) {
@@ -46,7 +46,7 @@ public class UserIO {
         return name;
     }
 
-    public String getTheNipNumber() {
+    public String getTheCustomerNipNumberToAdd() {
         System.out.println("Enter customer nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
@@ -61,34 +61,61 @@ public class UserIO {
     }
 
     public Customer preparaCustomerToAdd() {
-        String name = getTheName();
-        String nipNumber = getTheNipNumber();
+        String name = getTheCustomerNameToAdd();
+        String nipNumber = getTheCustomerNipNumberToAdd();
         return new Customer(name, nipNumber);
     }
 
-// TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
+    // TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
+    int id;
 
-    public int getIdToCustomerEdit() {
+    public int checkId(CustomerService customerService) {
+        System.out.println("Enter the customer id number to edit :");
+        id = scanner.nextInt();
+        int checkedId = 0;
+        try {
+            for (Customer idFromList : customerService.find()) {
+                checkedId = idFromList.getId();
+                if (checkedId == id) {
+                    checkedId = 10;
+                    break;
+                } else {
+                    checkedId = 20;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("COS POSZLO NIE TAK");
+        }
+        return checkedId;
+    }
+
+    int isEmpty;
+
+    public int getIdToEditCustomer(CustomerService customerService) {
         boolean goNext;
-        int id = 0;
         do {
-            System.out.println("Enter the customer id number to edit :");
             goNext = true;
             try {
-                id = scanner.nextInt();
+                if (checkId(customerService) == 20) {
+                    isEmpty = 20;
+                } else {
+                    isEmpty = 10;
+                }
             } catch (InputMismatchException exception) {
                 System.out.println("You must enter an integer.\n");
                 goNext = false;
-            } catch (Exception exception) {
-                System.out.println("You entered an invalid id number, select one of the above id numbers to edit.");
             }
             scanner.nextLine();
         } while (goNext != true);
-        return id;
+        if (isEmpty == 10) {
+            return id;
+        } else {
+            return isEmpty;
+        }
     }
 
     // TODO dlaczego tutaj przy podaniu inta w stringu puszcza dalej ?
-    public String getNameToCustomerEdit() {
+    public String getNameToEditCustomer() {
         System.out.println("Enter name :");
         String name = null;
         name = scanner.nextLine();
@@ -107,7 +134,7 @@ public class UserIO {
         return name;
     }
 
-    public String getNipToCustomerEdit() {
+    public String getNipToEditCustomer() {
         System.out.println("Enter nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
@@ -126,11 +153,15 @@ public class UserIO {
         return nipNumberPattern.matcher(nipNumber).matches();
     }
 
-    public Customer prepareCustomerToEdit() {
-        int id = getIdToCustomerEdit();
-        String name = getNameToCustomerEdit();
-        String nipNumber = getNipToCustomerEdit();
-        return new Customer(id, name, nipNumber);
+    public Customer prepareCustomerToEdit(CustomerService customerService) {
+        int id = getIdToEditCustomer(customerService);
+        if (isEmpty == 10) {
+            String name = getNameToEditCustomer();
+            String nipNumber = getNipToEditCustomer();
+            return new Customer(id, name, nipNumber);
+        } else {
+            return new Customer(null, null, null);
+        }
     }
 
     // TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
@@ -167,8 +198,8 @@ public class UserIO {
         System.out.println();
     }
 
-    //    public Product prepareProductToAdd() {
-    public String getEanToAdd() {
+
+    public String getEanToAddProduct() {
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
@@ -196,7 +227,7 @@ public class UserIO {
         return name;
     }
 
-    public BigDecimal getNetPriceToAdd() {
+    public BigDecimal getProductNetPriceToAdd() {
         BigDecimal netPrice = null;
         int helpPoint = 0;
         System.out.println("Enter product price :");
@@ -238,9 +269,9 @@ public class UserIO {
     }
 
     public Product prepareProductToAdd() {
-        String eanCode = getEanToAdd();
+        String eanCode = getEanToAddProduct();
         String name = getProductNameToAdd();
-        BigDecimal netPrice = getNetPriceToAdd();
+        BigDecimal netPrice = getProductNetPriceToAdd();
         BigDecimal taxPercent = getTaxPercentToAdd();
         return new Product(eanCode, name, netPrice, taxPercent);
     }
@@ -249,7 +280,6 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
-    //    public Product editProduct(List<Product> products) {
     public int getIdToEditProduct() {
         int id = 0;
         int helpPoint = 0;
@@ -316,7 +346,6 @@ public class UserIO {
         while (helpPointTax != 1) {
             helpPointTax = 1;
             System.out.println("Enter tax percent :");
-
             try {
                 taxPercent = scanner.nextBigDecimal();
             } catch (Exception exception) {
@@ -340,7 +369,7 @@ public class UserIO {
     public Product deleteProduct() {
         System.out.println("Enter the product id number to be removed from the database:");
         int id = 0;
-        boolean helpPoint = false;
+        boolean helpPoint;
         do {
             try {
                 id = scanner.nextInt();
