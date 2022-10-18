@@ -239,14 +239,38 @@ public class UserIO {
 
 
 
-    public String getProductNameToAdd() {
-        System.out.println("Enter name of product :");
-        String name = scanner.nextLine();
-        while (name.length() == 0) {
-            System.out.println("Name can't be null, wright product name :");
+        String name;
+    public String getProductNameToAdd(ProductService productService) {
+        do {
+            System.out.println("Enter name of product :");
             name = scanner.nextLine();
-        }
+            while (name.length() == 0) {
+                System.out.println("Name can't be null, wright product name :");
+                name = scanner.nextLine();
+            }
+//            checkTheName(productService);
+        }while (checkTheName(productService) == null);
         return name;
+    }
+
+    public String checkTheName(ProductService productService) {
+        String existInBase;
+        String chelpPoint = null;
+        try {
+            for (Product checkedName : productService.find()) {
+                existInBase = checkedName.getName();
+                if (name.equals(existInBase)) {
+                    System.out.println("This name of the product already exist in the base.");
+                    chelpPoint = null;
+                    break;
+                } else {
+                    chelpPoint = name;
+                }
+            }
+        } catch (Exception exception) {
+
+        }
+        return chelpPoint;
     }
 
     public BigDecimal getProductNetPriceToAdd() {
@@ -294,7 +318,7 @@ public class UserIO {
     public Product prepareProductToAdd(ProductService productService) {
         String eanCode = getEanToAddProduct();
         if (checkEan(productService).equals("no")) {
-            String name = getProductNameToAdd();
+            String name = getProductNameToAdd(productService);
             BigDecimal netPrice = getProductNetPriceToAdd();
             BigDecimal taxPercent = getTaxPercentToAdd();
             return new Product(eanCode, name, netPrice, taxPercent);
