@@ -82,7 +82,7 @@ public class Main {
 
 
         if (choose == 1) {
-            helpPoint = false;
+//            helpPoint = false;
             do {
                 helpPoint = false;
                 try {
@@ -104,14 +104,15 @@ public class Main {
                         do {
                             error = false;
                             try {
-                                productService.add(userIO.prepareProductToAdd());
+                                productService.add(userIO.prepareProductToAdd(productService));
                             } catch (SQLException sqlException) {
                                 if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
                                     System.out.println("This EAN code or product name is already in the database, check " +
                                             "the data and enter it again:");
                                     error = true;
                                 } else {
-                                    System.out.println("database write error!");
+                                    System.out.println("This EAN code has already been added to the database, re-enter another EAN code.");
+                                    error = true;
                                 }
                             }
                         } while (error == true);
@@ -130,13 +131,18 @@ public class Main {
                     }
                     System.out.println("What you want to do :\n1. Show products \n2. Add product \n" +
                             "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
-                    choose = scanner.nextInt();
+                    try {
+                        choose = scanner.nextInt();
+                    } catch (Exception exception) {
+                        System.out.println("This is not a number, please enter the number correctly!");
+                    }
                 } catch (Exception exception) {
                     System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
+                scanner.nextLine();
             } while (choose != 9);
         }
 

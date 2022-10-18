@@ -5,6 +5,7 @@ import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
+import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -198,10 +199,11 @@ public class UserIO {
         System.out.println();
     }
 
+    String eanCode;
 
     public String getEanToAddProduct() {
         System.out.println("Enter the 13-digit EAN code :");
-        String eanCode = scanner.nextLine();
+        eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
         do {
             if (!correctEanCode) {
@@ -216,6 +218,26 @@ public class UserIO {
         } while (!correctEanCode);
         return eanCode;
     }
+
+    public String checkEan(ProductService productService) {
+        String existInBase = null;
+        try {
+            for (Product eanFromList : productService.find()) {
+                existInBase = eanFromList.getEanCode();
+                if (eanCode.equals(existInBase)) {
+                    existInBase = "yes";
+                    break;
+                } else {
+                    existInBase = "no";
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong!");
+        }
+        return existInBase;
+    }
+
+
 
     public String getProductNameToAdd() {
         System.out.println("Enter name of product :");
@@ -268,16 +290,23 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToAdd() {
+    // Czy to sie da inaczej zabezpieczyc czy trzeba przejsc wszystko i dopiero na koncu wyskoczy informacja o duplikacie ?l
+    public Product prepareProductToAdd(ProductService productService) {
         String eanCode = getEanToAddProduct();
-        String name = getProductNameToAdd();
-        BigDecimal netPrice = getProductNetPriceToAdd();
-        BigDecimal taxPercent = getTaxPercentToAdd();
-        return new Product(eanCode, name, netPrice, taxPercent);
+        if (checkEan(productService).equals("no")) {
+            String name = getProductNameToAdd();
+            BigDecimal netPrice = getProductNetPriceToAdd();
+            BigDecimal taxPercent = getTaxPercentToAdd();
+            return new Product(eanCode, name, netPrice, taxPercent);
+        } else {
+            return new Product(null,null,null,null);
+        }
     }
 
-    private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
-        return correctEanPattern.matcher(eanCode).matches();
+
+
+        private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
+            return correctEanPattern.matcher(eanCode).matches();
     }
 
     public int getIdToEditProduct() {
