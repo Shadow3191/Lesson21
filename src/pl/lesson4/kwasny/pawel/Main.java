@@ -135,6 +135,7 @@ public class Main {
                         choose = scanner.nextInt();
                     } catch (Exception exception) {
                         System.out.println("This is not a number, please enter the number correctly!");
+                        choose = 0;
                     }
                 } catch (Exception exception) {
                     System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
@@ -178,7 +179,6 @@ public class Main {
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-//                scanner.nextLine();
             } while (choose != 9);
         }
 

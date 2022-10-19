@@ -8,9 +8,6 @@ import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -18,7 +15,7 @@ import java.util.regex.Pattern;
 public class UserIO {
     private Scanner scanner = new Scanner(System.in);
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
-    private Pattern namePattern = Pattern.compile("[A-Za-z]*");
+    private Pattern namePattern = Pattern.compile("^[A-Z][a-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
     private Pattern correctNetPricePattern = Pattern.compile("^\\d+");
 
@@ -68,69 +65,52 @@ public class UserIO {
     }
 
     // TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
-    int id;
+    int customerIdToEdit;
+    public int getIdToEditCustomer(CustomerService customerService) {
+        do {
+        System.out.println("Enter the customer id number to edit :");
+        customerIdToEdit = scanner.nextInt();
+        } while (checkId(customerService) == 0);
+        return customerIdToEdit;
+    }
 
     public int checkId(CustomerService customerService) {
-        System.out.println("Enter the customer id number to edit :");
-        id = scanner.nextInt();
         int checkedId = 0;
         try {
             for (Customer idFromList : customerService.find()) {
                 checkedId = idFromList.getId();
-                if (checkedId == id) {
-                    checkedId = 10;
+                if (checkedId == customerIdToEdit) {
+                    checkedId = customerIdToEdit;
                     break;
                 } else {
-                    checkedId = 20;
+                    checkedId = 0;
                 }
             }
         } catch (Exception exception) {
-            System.out.println("COS POSZLO NIE TAK");
+            System.out.println("Something went wrong.");
+        }
+        if (checkedId == 0) {
+            System.out.println("There is no such ID in the database.");
         }
         return checkedId;
     }
 
-    int isEmpty;
-
-    public int getIdToEditCustomer(CustomerService customerService) {
-        boolean goNext;
-        do {
-            goNext = true;
-            try {
-                if (checkId(customerService) == 20) {
-                    isEmpty = 20;
-                } else {
-                    isEmpty = 10;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println("You must enter an integer.\n");
-                goNext = false;
-            }
-            scanner.nextLine();
-        } while (goNext != true);
-        if (isEmpty == 10) {
-            return id;
-        } else {
-            return isEmpty;
-        }
-    }
-
-    // TODO dlaczego tutaj przy podaniu inta w stringu puszcza dalej ?
     public String getNameToEditCustomer() {
         System.out.println("Enter name :");
-        String name = null;
-        name = scanner.nextLine();
+        scanner.nextLine();
+        String name = scanner.nextLine();
         while (name.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             name = scanner.nextLine();
         }
         Boolean correctName = isCorrectValue(name, namePattern);
-        while (!correctName) {
-            if (correctName) {
-                System.out.println("You must write here name.\n");
+        while (correctName == false) {
+//            if (correctName) {
+                System.out.println("You must enter the first name, which will be in capital letters");
                 System.out.println("Enter name :");
                 name = scanner.nextLine();
-            }
+            correctName = isCorrectValue(name, namePattern);
+//            }
         }
         return name;
     }
@@ -156,13 +136,9 @@ public class UserIO {
 
     public Customer prepareCustomerToEdit(CustomerService customerService) {
         int id = getIdToEditCustomer(customerService);
-        if (isEmpty == 10) {
-            String name = getNameToEditCustomer();
-            String nipNumber = getNipToEditCustomer();
-            return new Customer(id, name, nipNumber);
-        } else {
-            return new Customer(null, null, null);
-        }
+        String name = getNameToEditCustomer();
+        String nipNumber = getNipToEditCustomer();
+        return new Customer(id, name, nipNumber);
     }
 
     // TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
@@ -249,7 +225,6 @@ public class UserIO {
                 System.out.println("Name can't be null, wright product name :");
                 name = scanner.nextLine();
             }
-//            checkTheName(productService);
         } while (checkTheName(productService) == null);
         return name;
     }
@@ -259,8 +234,8 @@ public class UserIO {
         String chelpPoint = null;
         try {
             for (Product checkedName : productService.find()) {
-                existInBase = checkedName.getName();
-                if (name.equals(existInBase)) {
+                existInBase = checkedName.getName().toLowerCase();
+                if (name.toLowerCase().equals(existInBase)) {
                     System.out.println("This name of the product already exist in the base.");
                     chelpPoint = null;
                     break;
@@ -328,22 +303,35 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
+
     public int getIdToEditProduct() {
-        int id = 0;
         int helpPoint = 0;
         while (helpPoint != 1) {
             System.out.println("Enter the id number you want to edit :");
             helpPoint = 1;
             try {
-                id = scanner.nextInt();
+                customerIdToEdit = scanner.nextInt();
             } catch (Exception exception) {
                 System.out.println("Id number isn't correct.");
                 helpPoint = 0;
             }
             scanner.nextLine();
         }
-        return id;
+        return customerIdToEdit;
     }
+
+    public int checkedProductId(ProductService productService) {
+        int checkedId;
+        try {
+            for (Product idFromList : productService.find()) {
+
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
+        }
+        return customerIdToEdit;
+    }
+
 
     public String getEanToEditProduct() {
         System.out.println("Enter the 13-digit EAN code :");
