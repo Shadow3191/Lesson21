@@ -48,7 +48,7 @@ public class InvoiceDao {
             preparedStatement.setString(1, invoice.getNumber());
             preparedStatement.setInt(2, invoice.getCustomerID());
             preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
-            preparedStatement.setBigDecimal(4, invoice.getPriceGossSum());
+            preparedStatement.setBigDecimal(4, invoice.getPriceGrossSum());
             preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
             throw new DatabaseException(sqlException.getMessage(), sqlException);
@@ -68,7 +68,7 @@ public class InvoiceDao {
             preparedStatement.setString(1, invoice.getNumber());
             preparedStatement.setInt(2, invoice.getCustomerID());
             preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
-            preparedStatement.setBigDecimal(4, invoice.getPriceGossSum());
+            preparedStatement.setBigDecimal(4, invoice.getPriceGrossSum());
             preparedStatement.setInt(5, invoice.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException sqlException) {
