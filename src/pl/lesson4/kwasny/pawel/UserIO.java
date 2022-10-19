@@ -201,21 +201,21 @@ public class UserIO {
 
     String eanCode;
 
-    public String getEanToAddProduct() {
-        System.out.println("Enter the 13-digit EAN code :");
-        eanCode = scanner.nextLine();
-        Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+    public String getEanToAddProduct(ProductService productService) {
         do {
-            if (!correctEanCode) {
-                try {
+            System.out.println("Enter the 13-digit EAN code :");
+            eanCode = scanner.nextLine();
+            Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+
+            do {
+                if (!correctEanCode) {
                     System.out.println("You must enter 13-digit code !");
                     eanCode = scanner.nextLine();
                     correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
-                } catch (Exception exception) {
-                    System.out.println("This EAN code already exists in the database, enter the new code :");
                 }
-            }
-        } while (!correctEanCode);
+            } while (correctEanCode == false);
+
+        } while (checkEan(productService) == null);
         return eanCode;
     }
 
@@ -225,10 +225,11 @@ public class UserIO {
             for (Product eanFromList : productService.find()) {
                 existInBase = eanFromList.getEanCode();
                 if (eanCode.equals(existInBase)) {
-                    existInBase = "yes";
+                    System.out.println("This EAN number already exist in base.");
+                    existInBase = null;
                     break;
                 } else {
-                    existInBase = "no";
+                    existInBase = eanCode;
                 }
             }
         } catch (Exception exception) {
@@ -238,8 +239,8 @@ public class UserIO {
     }
 
 
+    String name;
 
-        String name;
     public String getProductNameToAdd(ProductService productService) {
         do {
             System.out.println("Enter name of product :");
@@ -249,7 +250,7 @@ public class UserIO {
                 name = scanner.nextLine();
             }
 //            checkTheName(productService);
-        }while (checkTheName(productService) == null);
+        } while (checkTheName(productService) == null);
         return name;
     }
 
@@ -314,23 +315,17 @@ public class UserIO {
         return taxPercent;
     }
 
-    // Czy to sie da inaczej zabezpieczyc czy trzeba przejsc wszystko i dopiero na koncu wyskoczy informacja o duplikacie ?l
     public Product prepareProductToAdd(ProductService productService) {
-        String eanCode = getEanToAddProduct();
-        if (checkEan(productService).equals("no")) {
-            String name = getProductNameToAdd(productService);
-            BigDecimal netPrice = getProductNetPriceToAdd();
-            BigDecimal taxPercent = getTaxPercentToAdd();
-            return new Product(eanCode, name, netPrice, taxPercent);
-        } else {
-            return new Product(null,null,null,null);
-        }
+        String eanCode = getEanToAddProduct(productService);
+        String name = getProductNameToAdd(productService);
+        BigDecimal netPrice = getProductNetPriceToAdd();
+        BigDecimal taxPercent = getTaxPercentToAdd();
+        return new Product(eanCode, name, netPrice, taxPercent);
     }
 
 
-
-        private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
-            return correctEanPattern.matcher(eanCode).matches();
+    private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
+        return correctEanPattern.matcher(eanCode).matches();
     }
 
     public int getIdToEditProduct() {
