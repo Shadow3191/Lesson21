@@ -163,7 +163,7 @@ public class Main {
                         customerService.edit(userIO.prepareCustomerToEdit(customerService));
                     } else if (choose == 4) {
                         userIO.showCustomers(customerService.find());
-                        customerService.delete(userIO.deleteCustomer());
+                        customerService.delete(userIO.deleteCustomer(customerService));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {

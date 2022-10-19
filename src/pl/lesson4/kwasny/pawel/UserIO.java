@@ -64,7 +64,6 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
-    // TODO JAK ZABEZPIECZYĆ TEN KOD PRZED PODANIEM NIEPOPRAWNEGO ID ? TU I W KAŻDEJ INNEJ EDYCJI ?
     int customerIdToEdit;
     public int getIdToEditCustomer(CustomerService customerService) {
         do {
@@ -104,13 +103,11 @@ public class UserIO {
             name = scanner.nextLine();
         }
         Boolean correctName = isCorrectValue(name, namePattern);
-        while (correctName == false) {
-//            if (correctName) {
+        while (!correctName) {
                 System.out.println("You must enter the first name, which will be in capital letters");
                 System.out.println("Enter name :");
                 name = scanner.nextLine();
             correctName = isCorrectValue(name, namePattern);
-//            }
         }
         return name;
     }
@@ -120,12 +117,9 @@ public class UserIO {
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         do {
-            if (!correctNipNumber) {
-                System.out.println("You must write here nip number !");
-                System.out.println("Enter nip number in configuration 3-2-2-3 :");
+                System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
                 nipNumber = scanner.nextLine();
                 correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
-            }
         } while (!correctNipNumber);
         return nipNumber;
     }
@@ -141,25 +135,38 @@ public class UserIO {
         return new Customer(id, name, nipNumber);
     }
 
-    // TODO wszedzie gdzie trzeba podac id nie sprawdza i po prostu przeskakuje dalej jak to obsluzyc ?
     // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
-    public Customer deleteCustomer() {
-        System.out.println("Enter the customer id number to be removed from the database:");
-        int id = 0;
-        boolean helpPoint = false;
+    public Customer deleteCustomer(CustomerService customerService) {
         do {
-            helpPoint = false;
-            try {
-                id = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a correct number! Enter correct id number:");
-                helpPoint = true;
-            }
-            scanner.nextLine();
-        } while (helpPoint == true);
+            System.out.println("Enter the customer id number to be deleted:");
+            customerIdToEdit = scanner.nextInt();
+        } while (checkCustomerIdToDelete(customerService) == 0);
+        // tu dodac metode ktora usuwa wszystkie invoice ktore maja id customera
 
-        System.out.println("You delete id number : " + id);
+        System.out.println("You delete id number : " + customerIdToEdit);
+        int id = customerIdToEdit;
         return new Customer(id, null, null);
+    }
+
+    public int checkCustomerIdToDelete(CustomerService customerService) {
+        int checkedIdToDelete = 0;
+        try {
+            for (Customer idFromList : customerService.find()) {
+                checkedIdToDelete = idFromList.getId();
+                if (checkedIdToDelete == customerIdToEdit) {
+                    checkedIdToDelete = customerIdToEdit;
+                    break;
+                } else {
+                    checkedIdToDelete = 0;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
+        }
+        if (checkedIdToDelete == 0) {
+            System.out.println("There is no such ID in the database.");
+        }
+        return checkedIdToDelete;
     }
 
     public void showProduct(List<Product> products) {
@@ -256,7 +263,7 @@ public class UserIO {
         while (helpPoint != 1) {
             helpPoint = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ?
+                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ? - regexa trzeba dać
                 netPrice = scanner.nextBigDecimal();
                 if (netPrice == null) {
                     System.out.println("Price can't be null!");

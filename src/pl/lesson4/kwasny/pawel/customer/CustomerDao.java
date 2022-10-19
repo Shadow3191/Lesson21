@@ -95,7 +95,7 @@ public class CustomerDao {
     }
 
     public void deleteInvoicesContainingTheCustomerIdToDeleted(Customer customer) {
-        sql = "delete from invoice where id = ?";
+        sql = "delete from invoice where customer_id = ?";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, customer.getId());
