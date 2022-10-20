@@ -18,6 +18,7 @@ public class UserIO {
     private Pattern namePattern = Pattern.compile("^[A-Z][a-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
     private Pattern correctNetPricePattern = Pattern.compile("^\\d+");
+    private Pattern correctIdPattern = Pattern.compile("");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -68,12 +69,20 @@ public class UserIO {
     public int getIdToEditCustomer(CustomerService customerService) {
         do {
         System.out.println("Enter the customer id number to edit :");
-        customerIdToEdit = scanner.nextInt();
-        } while (checkId(customerService) == 0);
+        try {
+            customerIdToEdit = scanner.nextInt();
+        } catch (Exception exception) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            customerIdToEdit = scanner.nextInt();
+
+//            customerIdToEdit = 0;
+        }
+        } while (checkCustomerId(customerService) == 0);
         return customerIdToEdit;
     }
 
-    public int checkId(CustomerService customerService) {
+    public int checkCustomerId(CustomerService customerService) {
         int checkedId = 0;
         try {
             for (Customer idFromList : customerService.find()) {
@@ -135,14 +144,11 @@ public class UserIO {
         return new Customer(id, name, nipNumber);
     }
 
-    // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
     public Customer deleteCustomer(CustomerService customerService) {
         do {
             System.out.println("Enter the customer id number to be deleted:");
             customerIdToEdit = scanner.nextInt();
         } while (checkCustomerIdToDelete(customerService) == 0);
-        // tu dodac metode ktora usuwa wszystkie invoice ktore maja id customera
-
         System.out.println("You delete id number : " + customerIdToEdit);
         int id = customerIdToEdit;
         return new Customer(id, null, null);
@@ -169,6 +175,7 @@ public class UserIO {
         return checkedIdToDelete;
     }
 
+    //TODO poprawić cały kod w product !
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
@@ -189,7 +196,6 @@ public class UserIO {
             System.out.println("Enter the 13-digit EAN code :");
             eanCode = scanner.nextLine();
             Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
-
             do {
                 if (!correctEanCode) {
                     System.out.println("You must enter 13-digit code !");
@@ -197,7 +203,6 @@ public class UserIO {
                     correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
                 }
             } while (correctEanCode == false);
-
         } while (checkEan(productService) == null);
         return eanCode;
     }
@@ -237,11 +242,10 @@ public class UserIO {
     }
 
     public String checkTheName(ProductService productService) {
-        String existInBase;
         String chelpPoint = null;
         try {
             for (Product checkedName : productService.find()) {
-                existInBase = checkedName.getName().toLowerCase();
+                String existInBase = checkedName.getName().toLowerCase();
                 if (name.toLowerCase().equals(existInBase)) {
                     System.out.println("This name of the product already exist in the base.");
                     chelpPoint = null;
@@ -251,7 +255,7 @@ public class UserIO {
                 }
             }
         } catch (Exception exception) {
-
+            System.out.println("Something went wrong.");
         }
         return chelpPoint;
     }
@@ -263,7 +267,6 @@ public class UserIO {
         while (helpPoint != 1) {
             helpPoint = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ? - regexa trzeba dać
                 netPrice = scanner.nextBigDecimal();
                 if (netPrice == null) {
                     System.out.println("Price can't be null!");
@@ -272,7 +275,6 @@ public class UserIO {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint = 0;
                 scanner.nextLine();
-                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
         }
         return netPrice;
@@ -284,7 +286,6 @@ public class UserIO {
         while (helpPointTax != 1) {
             helpPointTax = 1;
             System.out.println("Enter tax percent :");
-
             try {
                 taxPercent = scanner.nextBigDecimal();
             } catch (Exception exception) {
@@ -305,38 +306,42 @@ public class UserIO {
         return new Product(eanCode, name, netPrice, taxPercent);
     }
 
-
     private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
-
-    public int getIdToEditProduct() {
-        int helpPoint = 0;
-        while (helpPoint != 1) {
+    int productIdToEdit;
+    public int getIdToEditProduct(ProductService productService) {
+        do {
             System.out.println("Enter the id number you want to edit :");
-            helpPoint = 1;
             try {
-                customerIdToEdit = scanner.nextInt();
+                productIdToEdit = scanner.nextInt();
             } catch (Exception exception) {
-                System.out.println("Id number isn't correct.");
-                helpPoint = 0;
+                System.out.println("You must enter id number :");
+                scanner.nextLine();
+                productIdToEdit = scanner.nextInt();
             }
-            scanner.nextLine();
-        }
-        return customerIdToEdit;
+        } while (checkedProductId(productService) == 0);
+        return productIdToEdit;
     }
-
+// TODO zaczęte robienie sprawdzania ID do Productu
     public int checkedProductId(ProductService productService) {
-        int checkedId;
+        int checkedId = 0;
         try {
             for (Product idFromList : productService.find()) {
-
+                checkedId = idFromList.getId();
+                if (checkedId == productIdToEdit) {
+                    checkedId = productIdToEdit;
+                    break;
+                } else {
+                    checkedId = 0;
+                }
             }
+            System.out.println("There is no such ID in the database.");
         } catch (Exception exception) {
             System.out.println("Something went wrong.");
         }
-        return customerIdToEdit;
+        return checkedId;
     }
 
 
@@ -371,13 +376,13 @@ public class UserIO {
         while (helpPoint1 != 1) {
             helpPoint1 = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny ?
+                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny ? - regex
                 netPrice = scanner.nextBigDecimal();
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint1 = 0;
                 scanner.nextLine();
-                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
+                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ? - dodać metodę
             }
         }
         return netPrice;
@@ -400,8 +405,8 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToEdit() {
-        int id = getIdToEditProduct();
+    public Product prepareProductToEdit(ProductService productService) {
+        int id = getIdToEditProduct(productService);
         String eanCode = getEanToEditProduct();
         String name = getProductNameToEdit();
         BigDecimal netPrice = getProductNetPriceToEdit();
@@ -449,7 +454,6 @@ public class UserIO {
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    //    public Invoice editInvoice() {
     public int getInvoiceIdToEdit() {
         System.out.println("Enter id number of invoice who you want to edit :");
         int id = 0;
@@ -532,7 +536,6 @@ public class UserIO {
         }
     }
 
-    //    public InvoiceItem addInvoiceItem() {
     public int getProductIdToAddInvoiceItem() {
         System.out.println("Enter the product id from the list above:");
         int productId = 0;
@@ -642,7 +645,6 @@ public class UserIO {
     }
 
 
-    //    public InvoiceItem editInvoiceItem() {
     public int getIdToEditInvoiceItem() {
         System.out.println("Enter id from invoice item what you want to edit from the list above:");
         int id = 0;
