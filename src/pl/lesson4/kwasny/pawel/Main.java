@@ -122,7 +122,7 @@ public class Main {
                         productService.edit(userIO.prepareProductToEdit(productService));
                     } else if (choose == 4) {
                         userIO.showProduct(productService.find());
-                        productService.delete(userIO.deleteProduct());
+                        productService.delete(userIO.deleteProduct(productService));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
