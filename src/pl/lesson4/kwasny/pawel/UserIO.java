@@ -446,26 +446,6 @@ public class UserIO {
 
     int productIdToDelete;
     public Product deleteProduct(ProductService productService) {
-//        int number = 0;
-//        do {
-//            System.out.println("Enter the product id number to be deleted:");
-//        number = 2;
-//        } while (number != 0);
-//        int id = 0;
-//        boolean helpPoint;
-//        do {
-//            try {
-//                id = scanner.nextInt();
-//                helpPoint = false;
-//            } catch (Exception exception) {
-//                System.out.println("It's not a correct number! Enter correct id number:");
-//                helpPoint = true;
-//            }
-//            scanner.nextLine();
-//        } while (helpPoint == true);
-//
-//        System.out.println("You delete id number : " + id + "\n");
-//        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
         do {
             System.out.println("Enter product id number to delete:");
             productIdToDelete = scanner.nextInt();
