@@ -156,7 +156,7 @@ public class Main {
                         userIO.showCustomers(customerService.find());
                         userIO.checkingEmptyItems(customerService.find());
                     } else if (choose == 2) {
-                        customerService.add(userIO.preparaCustomerToAdd());
+                        customerService.add(userIO.preparedCustomerToAdd());
                     } else if (choose == 3) {
                         userIO.showCustomers(customerService.find());
                         customerService.edit(userIO.prepareCustomerToEdit(customerService));
@@ -192,7 +192,7 @@ public class Main {
                         userIO.showInvoices(invoiceService.find());
                     } else if (choose == 2) {
                         userIO.showCustomers(customerService.find());
-                        invoiceService.add(userIO.addInvoice());
+                        invoiceService.add(userIO.prepareInvoiceToAdd());
                     } else if (choose == 3) {
                         userIO.showInvoices(invoiceService.find());
                         invoiceService.edit(userIO.prepareInvoiceToEdit());

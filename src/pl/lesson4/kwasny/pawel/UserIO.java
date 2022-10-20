@@ -17,7 +17,6 @@ public class UserIO {
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("^[A-Z][a-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
-    private Pattern correctNetPricePattern = Pattern.compile("^\\d+.?\\d+");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -27,7 +26,7 @@ public class UserIO {
         }
         System.out.println();
     }
-
+// TODO dodać takie w innych klasach
     public void checkingEmptyItems(List<Customer> customers) {
         if (customers != null && customers.isEmpty()) {
             System.out.println("No customers have been added yet.\n");
@@ -58,7 +57,7 @@ public class UserIO {
         return nipNumber;
     }
 
-    public Customer preparaCustomerToAdd() {
+    public Customer preparedCustomerToAdd() {
         String name = getTheCustomerNameToAdd();
         String nipNumber = getTheCustomerNipNumberToAdd();
         return new Customer(name, nipNumber);
@@ -75,8 +74,6 @@ public class UserIO {
                 System.out.println("You must enter id number :");
                 scanner.nextLine();
                 customerIdToEdit = scanner.nextInt();
-
-//            customerIdToEdit = 0;
             }
         } while (checkCustomerId(customerService) == 0);
         return customerIdToEdit;
@@ -268,9 +265,6 @@ public class UserIO {
             helpPoint = 1;
             try {
                 netPrice = scanner.nextBigDecimal();
-                if (netPrice == null) {
-                    System.out.println("Price can't be null!");
-                }
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint = 0;
@@ -400,6 +394,7 @@ public class UserIO {
         }
         return chelpPoint;
     }
+
     BigDecimal netPrice = null;
 
     public BigDecimal getProductNetPriceToEdit() {
@@ -487,13 +482,31 @@ public class UserIO {
         System.out.println();
 
     }
-
+// zrobić metody i usunąć
     public Invoice addInvoice() {
         System.out.println("Enter invoice number :");
         String number = scanner.nextLine();
         System.out.println("Enter the customer id from the list above :");
         int customerId = scanner.nextInt();
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
+    }
+    
+    public String getNumberToAddInvoice() {
+        System.out.println("Enter invoice number :");
+        String number = scanner.nextLine();
+        return number;
+    }
+
+    public int getCustomerIdToAddInvoice() {
+        System.out.println("Enter the customer id from the list above :");
+        int customerId = scanner.nextInt();
+        return customerId;
+    }
+
+    public Invoice prepareInvoiceToAdd() {
+        String number = getNumberToAddInvoice();
+        int customerId = getCustomerIdToAddInvoice();
+        return  new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     public int getInvoiceIdToEdit() {
