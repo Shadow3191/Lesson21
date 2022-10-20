@@ -17,7 +17,7 @@ public class UserIO {
     private Pattern nipNumberPattern = Pattern.compile("^[1-9]\\d{2}-\\d{2}-\\d{2}-\\d{3}$");
     private Pattern namePattern = Pattern.compile("^[A-Z][a-z]*");
     private Pattern correctEanPattern = Pattern.compile("^\\d{13}$");
-    private Pattern correctNetPricePattern = Pattern.compile("^\\d+");
+    private Pattern correctNetPricePattern = Pattern.compile("^\\d+.?\\d+");
 
 
     public void showCustomers(List<Customer> customers) {
@@ -65,15 +65,24 @@ public class UserIO {
     }
 
     int customerIdToEdit;
+
     public int getIdToEditCustomer(CustomerService customerService) {
         do {
-        System.out.println("Enter the customer id number to edit :");
-        customerIdToEdit = scanner.nextInt();
-        } while (checkId(customerService) == 0);
+            System.out.println("Enter the customer id number to edit :");
+            try {
+                customerIdToEdit = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("You must enter id number :");
+                scanner.nextLine();
+                customerIdToEdit = scanner.nextInt();
+
+//            customerIdToEdit = 0;
+            }
+        } while (checkCustomerId(customerService) == 0);
         return customerIdToEdit;
     }
 
-    public int checkId(CustomerService customerService) {
+    public int checkCustomerId(CustomerService customerService) {
         int checkedId = 0;
         try {
             for (Customer idFromList : customerService.find()) {
@@ -104,9 +113,9 @@ public class UserIO {
         }
         Boolean correctName = isCorrectValue(name, namePattern);
         while (!correctName) {
-                System.out.println("You must enter the first name, which will be in capital letters");
-                System.out.println("Enter name :");
-                name = scanner.nextLine();
+            System.out.println("You must enter the first name, which will be in capital letters");
+            System.out.println("Enter name :");
+            name = scanner.nextLine();
             correctName = isCorrectValue(name, namePattern);
         }
         return name;
@@ -117,9 +126,9 @@ public class UserIO {
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         do {
-                System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
-                nipNumber = scanner.nextLine();
-                correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
+            System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
+            nipNumber = scanner.nextLine();
+            correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         } while (!correctNipNumber);
         return nipNumber;
     }
@@ -135,26 +144,23 @@ public class UserIO {
         return new Customer(id, name, nipNumber);
     }
 
-    // TODO Aby obsłużyć usunięcie Customera muszę najpierw usunac z Invoice pozycję gdzie jest dany customer
+    int customerIdToDelete;
     public Customer deleteCustomer(CustomerService customerService) {
         do {
-            System.out.println("Enter the customer id number to be deleted:");
-            customerIdToEdit = scanner.nextInt();
+            System.out.println("Enter customer id number to delete:");
+            customerIdToDelete = scanner.nextInt();
         } while (checkCustomerIdToDelete(customerService) == 0);
-        // tu dodac metode ktora usuwa wszystkie invoice ktore maja id customera
-
-        System.out.println("You delete id number : " + customerIdToEdit);
-        int id = customerIdToEdit;
+        int id = customerIdToDelete;
         return new Customer(id, null, null);
     }
 
     public int checkCustomerIdToDelete(CustomerService customerService) {
         int checkedIdToDelete = 0;
         try {
-            for (Customer idFromList : customerService.find()) {
-                checkedIdToDelete = idFromList.getId();
-                if (checkedIdToDelete == customerIdToEdit) {
-                    checkedIdToDelete = customerIdToEdit;
+            for (Customer customerId : customerService.find()) {
+                checkedIdToDelete = customerId.getId();
+                if (checkedIdToDelete == customerIdToDelete) {
+                    checkedIdToDelete = customerIdToDelete;
                     break;
                 } else {
                     checkedIdToDelete = 0;
@@ -169,6 +175,7 @@ public class UserIO {
         return checkedIdToDelete;
     }
 
+    //TODO poprawić cały kod w product !
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
@@ -188,8 +195,7 @@ public class UserIO {
         do {
             System.out.println("Enter the 13-digit EAN code :");
             eanCode = scanner.nextLine();
-            Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
-
+            boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
             do {
                 if (!correctEanCode) {
                     System.out.println("You must enter 13-digit code !");
@@ -197,7 +203,6 @@ public class UserIO {
                     correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
                 }
             } while (correctEanCode == false);
-
         } while (checkEan(productService) == null);
         return eanCode;
     }
@@ -237,11 +242,10 @@ public class UserIO {
     }
 
     public String checkTheName(ProductService productService) {
-        String existInBase;
         String chelpPoint = null;
         try {
             for (Product checkedName : productService.find()) {
-                existInBase = checkedName.getName().toLowerCase();
+                String existInBase = checkedName.getName().toLowerCase();
                 if (name.toLowerCase().equals(existInBase)) {
                     System.out.println("This name of the product already exist in the base.");
                     chelpPoint = null;
@@ -251,7 +255,7 @@ public class UserIO {
                 }
             }
         } catch (Exception exception) {
-
+            System.out.println("Something went wrong.");
         }
         return chelpPoint;
     }
@@ -263,7 +267,6 @@ public class UserIO {
         while (helpPoint != 1) {
             helpPoint = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny czy program nie pusci ? - regexa trzeba dać
                 netPrice = scanner.nextBigDecimal();
                 if (netPrice == null) {
                     System.out.println("Price can't be null!");
@@ -272,7 +275,6 @@ public class UserIO {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint = 0;
                 scanner.nextLine();
-                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
         }
         return netPrice;
@@ -284,7 +286,6 @@ public class UserIO {
         while (helpPointTax != 1) {
             helpPointTax = 1;
             System.out.println("Enter tax percent :");
-
             try {
                 taxPercent = scanner.nextBigDecimal();
             } catch (Exception exception) {
@@ -305,42 +306,50 @@ public class UserIO {
         return new Product(eanCode, name, netPrice, taxPercent);
     }
 
-
     private boolean isCorrectEanValue(String eanCode, Pattern correctEanPattern) {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
+    int productIdToEdit;
 
-    public int getIdToEditProduct() {
-        int helpPoint = 0;
-        while (helpPoint != 1) {
+    public int getIdToEditProduct(ProductService productService) {
+        do {
             System.out.println("Enter the id number you want to edit :");
-            helpPoint = 1;
             try {
-                customerIdToEdit = scanner.nextInt();
+                productIdToEdit = scanner.nextInt();
             } catch (Exception exception) {
-                System.out.println("Id number isn't correct.");
-                helpPoint = 0;
+                System.out.println("You must enter id number :");
+                scanner.nextLine();
+                productIdToEdit = scanner.nextInt();
             }
-            scanner.nextLine();
-        }
-        return customerIdToEdit;
+        } while (checkedProductId(productService) == 0);
+        return productIdToEdit;
     }
 
     public int checkedProductId(ProductService productService) {
-        int checkedId;
+        int checkedId = 0;
         try {
             for (Product idFromList : productService.find()) {
-
+                checkedId = idFromList.getId();
+                if (checkedId == productIdToEdit) {
+                    checkedId = productIdToEdit;
+                    break;
+                } else {
+                    checkedId = 0;
+                }
+            }
+            if (checkedId == 0) {
+                System.out.println("There is no such ID in the database.");
             }
         } catch (Exception exception) {
             System.out.println("Something went wrong.");
         }
-        return customerIdToEdit;
+        return checkedId;
     }
 
 
     public String getEanToEditProduct() {
+        scanner.nextLine();
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
@@ -354,30 +363,56 @@ public class UserIO {
         return eanCode;
     }
 
-    public String getProductNameToEdit() {
-        System.out.println("Enter name of product :");
-        String name = scanner.nextLine();
-        while (name.length() == 0) {
-            System.out.println("Name can't be null, wright product name :");
-            name = scanner.nextLine();
-        }
-        return name;
+    String productNameToEdit;
+
+    public String getProductNameToEdit(ProductService productService) {
+        do {
+            System.out.println("Enter name of product :");
+            productNameToEdit = scanner.nextLine();
+            while (productNameToEdit.length() == 0) {
+                System.out.println("Name can't be null, wright product name :");
+                productNameToEdit = scanner.nextLine();
+            }
+        } while (checkProductNameToEdit(productService) == null);
+        return productNameToEdit;
     }
 
+    public String checkProductNameToEdit(ProductService productService) {
+        String chelpPoint = null;
+        try {
+            for (Product checkedName : productService.find()) {
+                String existInBase = checkedName.getName().toLowerCase();
+                if (productNameToEdit.toLowerCase().equals(existInBase)) {
+                    if (productIdToEdit == checkedName.getId()) {
+                        System.out.println("You have changed the product name as it was before.");
+                        chelpPoint = productNameToEdit;
+                    } else {
+                        System.out.println("This name of the product already exist in the base.");
+                        chelpPoint = null;
+                        break;
+                    }
+                } else {
+                    chelpPoint = productNameToEdit;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
+        }
+        return chelpPoint;
+    }
+    BigDecimal netPrice = null;
+
     public BigDecimal getProductNetPriceToEdit() {
-        BigDecimal netPrice = null;
         int helpPoint1 = 0;
         System.out.println("Enter net price :");
         while (helpPoint1 != 1) {
             helpPoint1 = 1;
             try {
-                // TODO czy tutaj da się jakoś zabezpieczyć przed enterem przed brakiem wpisania ceny ?
                 netPrice = scanner.nextBigDecimal();
             } catch (Exception exception) {
                 System.out.println("It isn't a price ! Enter correct price :");
                 helpPoint1 = 0;
                 scanner.nextLine();
-                // TODO JAK TUTAJ DODAć DODATKOWE ODBłUZENIE ZEBY POKAZYWALO ZE TEN TOWAR JUZ JEST I WPISUJEMY KOLEJNY RAZ NAZWE TOWARU ?
             }
         }
         return netPrice;
@@ -400,32 +435,44 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToEdit() {
-        int id = getIdToEditProduct();
+    public Product prepareProductToEdit(ProductService productService) {
+        int id = getIdToEditProduct(productService);
         String eanCode = getEanToEditProduct();
-        String name = getProductNameToEdit();
+        String name = getProductNameToEdit(productService);
         BigDecimal netPrice = getProductNetPriceToEdit();
         BigDecimal taxPercent = getProductTaxPercentToEdit();
         return new Product(id, eanCode, name, netPrice, taxPercent);
     }
 
-    public Product deleteProduct() {
-        System.out.println("Enter the product id number to be removed from the database:");
-        int id = 0;
-        boolean helpPoint;
+    int productIdToDelete;
+    public Product deleteProduct(ProductService productService) {
         do {
-            try {
-                id = scanner.nextInt();
-                helpPoint = false;
-            } catch (Exception exception) {
-                System.out.println("It's not a correct number! Enter correct id number:");
-                helpPoint = true;
-            }
-            scanner.nextLine();
-        } while (helpPoint == true);
+            System.out.println("Enter product id number to delete:");
+            productIdToDelete = scanner.nextInt();
+        } while (checkProductIdToDelete(productService) == 0);
+        int id = productIdToDelete;
+        return new Product(id,null,null,BigDecimal.ZERO,BigDecimal.ZERO);
+    }
 
-        System.out.println("You delete id number : " + id + "\n");
-        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+    public int checkProductIdToDelete(ProductService productService) {
+        int checkedIdToDelete = 0;
+        try {
+            for (Product productId : productService.find()){
+                checkedIdToDelete = productId.getId();
+                if (checkedIdToDelete == productIdToDelete){
+                    checkedIdToDelete = productIdToDelete;
+                    break;
+                } else {
+                    checkedIdToDelete = 0;
+                }
+            }
+        } catch (Exception exception){
+            System.out.println("Something went wrong.");
+        }
+        if (checkedIdToDelete == 0) {
+            System.out.println("There is no such ID in the database.");
+        }
+        return checkedIdToDelete;
     }
 
 
@@ -449,7 +496,6 @@ public class UserIO {
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    //    public Invoice editInvoice() {
     public int getInvoiceIdToEdit() {
         System.out.println("Enter id number of invoice who you want to edit :");
         int id = 0;
@@ -532,7 +578,6 @@ public class UserIO {
         }
     }
 
-    //    public InvoiceItem addInvoiceItem() {
     public int getProductIdToAddInvoiceItem() {
         System.out.println("Enter the product id from the list above:");
         int productId = 0;
@@ -642,7 +687,6 @@ public class UserIO {
     }
 
 
-    //    public InvoiceItem editInvoiceItem() {
     public int getIdToEditInvoiceItem() {
         System.out.println("Enter id from invoice item what you want to edit from the list above:");
         int id = 0;

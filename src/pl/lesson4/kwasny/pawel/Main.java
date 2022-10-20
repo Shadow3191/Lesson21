@@ -119,10 +119,10 @@ public class Main {
 
                     } else if (choose == 3) {
                         userIO.showProduct(productService.find());
-                        productService.edit(userIO.prepareProductToEdit());
+                        productService.edit(userIO.prepareProductToEdit(productService));
                     } else if (choose == 4) {
                         userIO.showProduct(productService.find());
-                        productService.delete(userIO.deleteProduct());
+                        productService.delete(userIO.deleteProduct(productService));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
@@ -138,12 +138,11 @@ public class Main {
                         choose = 0;
                     }
                 } catch (Exception exception) {
-                    System.out.println("The EAN code or product name is already in the database, re-enter the data:\n");
+                    System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-                scanner.nextLine();
             } while (choose != 9);
         }
 
@@ -174,12 +173,13 @@ public class Main {
                             "3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
                 } catch (Exception exception) {
-                    System.out.println("This is not a correct number, please try again:\n");
+                    System.out.println("This is not a correct number, please try again.");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
             } while (choose != 9);
+            scanner.nextInt();
         }
 
         if (choose == 3) {
