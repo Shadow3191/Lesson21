@@ -66,18 +66,19 @@ public class UserIO {
     }
 
     int customerIdToEdit;
+
     public int getIdToEditCustomer(CustomerService customerService) {
         do {
-        System.out.println("Enter the customer id number to edit :");
-        try {
-            customerIdToEdit = scanner.nextInt();
-        } catch (Exception exception) {
-            System.out.println("You must enter id number :");
-            scanner.nextLine();
-            customerIdToEdit = scanner.nextInt();
+            System.out.println("Enter the customer id number to edit :");
+            try {
+                customerIdToEdit = scanner.nextInt();
+            } catch (Exception exception) {
+                System.out.println("You must enter id number :");
+                scanner.nextLine();
+                customerIdToEdit = scanner.nextInt();
 
 //            customerIdToEdit = 0;
-        }
+            }
         } while (checkCustomerId(customerService) == 0);
         return customerIdToEdit;
     }
@@ -113,9 +114,9 @@ public class UserIO {
         }
         Boolean correctName = isCorrectValue(name, namePattern);
         while (!correctName) {
-                System.out.println("You must enter the first name, which will be in capital letters");
-                System.out.println("Enter name :");
-                name = scanner.nextLine();
+            System.out.println("You must enter the first name, which will be in capital letters");
+            System.out.println("Enter name :");
+            name = scanner.nextLine();
             correctName = isCorrectValue(name, namePattern);
         }
         return name;
@@ -126,9 +127,9 @@ public class UserIO {
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         do {
-                System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
-                nipNumber = scanner.nextLine();
-                correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
+            System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
+            nipNumber = scanner.nextLine();
+            correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
         } while (!correctNipNumber);
         return nipNumber;
     }
@@ -311,6 +312,7 @@ public class UserIO {
     }
 
     int productIdToEdit;
+
     public int getIdToEditProduct(ProductService productService) {
         do {
             System.out.println("Enter the id number you want to edit :");
@@ -324,7 +326,7 @@ public class UserIO {
         } while (checkedProductId(productService) == 0);
         return productIdToEdit;
     }
-// TODO zaczęte robienie sprawdzania ID do Productu
+
     public int checkedProductId(ProductService productService) {
         int checkedId = 0;
         try {
@@ -337,7 +339,9 @@ public class UserIO {
                     checkedId = 0;
                 }
             }
-            System.out.println("There is no such ID in the database.");
+            if (checkedId == 0) {
+                System.out.println("There is no such ID in the database.");
+            }
         } catch (Exception exception) {
             System.out.println("Something went wrong.");
         }
@@ -346,6 +350,7 @@ public class UserIO {
 
 
     public String getEanToEditProduct() {
+        scanner.nextLine();
         System.out.println("Enter the 13-digit EAN code :");
         String eanCode = scanner.nextLine();
         Boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
@@ -359,14 +364,42 @@ public class UserIO {
         return eanCode;
     }
 
-    public String getProductNameToEdit() {
-        System.out.println("Enter name of product :");
-        String name = scanner.nextLine();
-        while (name.length() == 0) {
-            System.out.println("Name can't be null, wright product name :");
-            name = scanner.nextLine();
+    String productNameToEdit;
+
+    public String getProductNameToEdit(ProductService productService) {
+        do {
+            System.out.println("Enter name of product :");
+            productNameToEdit = scanner.nextLine();
+            while (productNameToEdit.length() == 0) {
+                System.out.println("Name can't be null, wright product name :");
+                productNameToEdit = scanner.nextLine();
+            }
+        } while (checkProductNameToEdit(productService) == null);
+        return productNameToEdit;
+    }
+
+    public String checkProductNameToEdit(ProductService productService) {
+        String chelpPoint = null;
+        try {
+            for (Product checkedName : productService.find()) {
+                String existInBase = checkedName.getName().toLowerCase();
+                if (productNameToEdit.toLowerCase().equals(existInBase)) {
+                    if (productIdToEdit == checkedName.getId()) {
+                        System.out.println("You have changed the product name as it was before.");
+                        chelpPoint = productNameToEdit;
+                    } else {
+                        System.out.println("This name of the product already exist in the base.");
+                        chelpPoint = null;
+                        break;
+                    }
+                } else {
+                    chelpPoint = productNameToEdit;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
         }
-        return name;
+        return chelpPoint;
     }
 
     public BigDecimal getProductNetPriceToEdit() {
@@ -408,7 +441,7 @@ public class UserIO {
     public Product prepareProductToEdit(ProductService productService) {
         int id = getIdToEditProduct(productService);
         String eanCode = getEanToEditProduct();
-        String name = getProductNameToEdit();
+        String name = getProductNameToEdit(productService);
         BigDecimal netPrice = getProductNetPriceToEdit();
         BigDecimal taxPercent = getProductTaxPercentToEdit();
         return new Product(id, eanCode, name, netPrice, taxPercent);
