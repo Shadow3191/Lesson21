@@ -629,23 +629,35 @@ public class UserIO {
         return new Invoice(id, number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    public Invoice deleteInvoice() {
-        System.out.println("Enter the invoice id number to be removed from the database:");
-        int id = 0;
-        boolean helpPoint = false;
+    int invoiceIdToDelete;
+    public Invoice deleteInvoice(InvoiceService invoiceService) {
         do {
-            helpPoint = false;
-            try {
-                id = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a correct number! Enter correct invoice number:");
-                helpPoint = true;
-            }
-            scanner.nextLine();
-        } while (helpPoint == true);
+            System.out.println("Enter invoice id to delete:");
+            invoiceIdToDelete = scanner.nextInt();
+        } while (checkInvoiceIdToDelete(invoiceService) == 0);
+        int id = invoiceIdToDelete;
+        return  new Invoice(id,null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+    }
 
-        System.out.println("You delete id number : " + id);
-        return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+    public int checkInvoiceIdToDelete(InvoiceService invoiceService) {
+        int checkedIdToDelete = 0;
+        try {
+            for (Invoice invoiceId : invoiceService.find()) {
+                checkedIdToDelete = invoiceId.getId();
+                if (checkedIdToDelete == invoiceIdToDelete) {
+                    checkedIdToDelete = invoiceIdToDelete;
+                    break;
+                } else {
+                    checkedIdToDelete = 0;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
+        }
+        if (checkedIdToDelete == 0) {
+            System.out.println("There is no such ID in the database.");
+        }
+        return checkedIdToDelete;
     }
 
     boolean emptyDatabase = false;

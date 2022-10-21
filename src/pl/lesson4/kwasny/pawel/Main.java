@@ -198,7 +198,7 @@ public class Main {
                         invoiceService.edit(userIO.prepareInvoiceToEdit(invoiceService, customerService));
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.delete(userIO.deleteInvoice());
+                        invoiceService.delete(userIO.deleteInvoice(invoiceService));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
