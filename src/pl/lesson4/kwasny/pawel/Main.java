@@ -195,7 +195,7 @@ public class Main {
                         invoiceService.add(userIO.prepareInvoiceToAdd());
                     } else if (choose == 3) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.edit(userIO.prepareInvoiceToEdit());
+                        invoiceService.edit(userIO.prepareInvoiceToEdit(invoiceService, customerService));
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
                         invoiceService.delete(userIO.deleteInvoice());
@@ -215,7 +215,7 @@ public class Main {
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-                scanner.nextLine();
+//                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 4) {
