@@ -231,7 +231,7 @@ public class Main {
                     } else if (choose == 2) {
                         userIO.showProduct(productService.find());
                         userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd());
+                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd(productService));
                     } else if (choose == 3) {
                         userIO.showInvoiceItem(invoiceItemService.find());
                         userIO.showProduct(productService.find());

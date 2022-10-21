@@ -5,6 +5,7 @@ import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
 import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
 
@@ -506,7 +507,6 @@ public class UserIO {
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    //--------------------------------------------------------------------------------------- ponizej ogarnac
     int invoiceIdToEdit;
 
     public int getInvoiceIdToEdit(InvoiceService invoiceService) {
@@ -676,22 +676,36 @@ public class UserIO {
         }
     }
 
-    public int getProductIdToAddInvoiceItem() {
-        System.out.println("Enter the product id from the list above:");
-        int productId = 0;
-        boolean helpPoint = false;
+    int productIdNumber;
+    public int getProductIdToAddInvoiceItem(ProductService productService) {
         do {
-            helpPoint = false;
-            try {
-                productId = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter a number ! Enter correct product id number :");
-                helpPoint = true;
-            }
-            scanner.nextLine();
-        } while (helpPoint == true);
-        return productId;
+            System.out.println("Enter invoice number:");
+            productIdNumber = scanner.nextInt();
+        } while (checkIdToAddInvoiceItem(productService) == 0);
+        return productIdNumber;
     }
+
+    public int checkIdToAddInvoiceItem( ProductService productService) {
+        int checkId = 0;
+        try {
+            for (Product idFromList : productService.find()) {
+                checkId = idFromList.getId();
+                if (checkId == productIdNumber) {
+                    checkId = productIdNumber;
+                    break;
+                } else {
+                    checkId = 0;
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Something went wrong.");
+        }
+        if (checkId == 0) {
+            System.out.println("There is no such ID in the database.");
+        }
+        return checkId;
+    }
+
 
     public int getInvoiceIdToAddInvoiceItem() {
         System.out.println("Enter the invoice id from the list above :");
@@ -773,8 +787,8 @@ public class UserIO {
         return grossPrice;
     }
 
-    public InvoiceItem prepareInvoiceItemToAdd() {
-        int productId = getProductIdToAddInvoiceItem();
+    public InvoiceItem prepareInvoiceItemToAdd(ProductService productService) {
+        int productId = getProductIdToAddInvoiceItem(productService);
         int invoiceId = getInvoiceIdToAddInvoiceItem();
         int quantity = getProductQuantityToAddInvoiceItem();
         String productName = getProductNameToAddInvoiceItem();
