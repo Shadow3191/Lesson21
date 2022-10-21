@@ -156,7 +156,7 @@ public class Main {
                         userIO.showCustomers(customerService.find());
                         userIO.checkingEmptyItems(customerService.find());
                     } else if (choose == 2) {
-                        customerService.add(userIO.preparaCustomerToAdd());
+                        customerService.add(userIO.preparedCustomerToAdd());
                     } else if (choose == 3) {
                         userIO.showCustomers(customerService.find());
                         customerService.edit(userIO.prepareCustomerToEdit(customerService));
@@ -192,13 +192,13 @@ public class Main {
                         userIO.showInvoices(invoiceService.find());
                     } else if (choose == 2) {
                         userIO.showCustomers(customerService.find());
-                        invoiceService.add(userIO.addInvoice());
+                        invoiceService.add(userIO.prepareInvoiceToAdd());
                     } else if (choose == 3) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.edit(userIO.prepareInvoiceToEdit());
+                        invoiceService.edit(userIO.prepareInvoiceToEdit(invoiceService, customerService));
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.delete(userIO.deleteInvoice());
+                        invoiceService.delete(userIO.deleteInvoice(invoiceService));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
@@ -215,7 +215,7 @@ public class Main {
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-                scanner.nextLine();
+//                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 4) {
@@ -231,7 +231,7 @@ public class Main {
                     } else if (choose == 2) {
                         userIO.showProduct(productService.find());
                         userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd());
+                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd(productService));
                     } else if (choose == 3) {
                         userIO.showInvoiceItem(invoiceItemService.find());
                         userIO.showProduct(productService.find());
