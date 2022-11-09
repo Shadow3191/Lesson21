@@ -15,6 +15,10 @@ public class CustomerService {
         return customerDao.find();
     }
 
+    public Customer get(Integer id) {
+        return customerDao.get(id);
+    }
+
     public void add(Customer customer) {
         customerDao.add(customer);
     }

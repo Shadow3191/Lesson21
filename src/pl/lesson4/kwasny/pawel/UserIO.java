@@ -1,15 +1,16 @@
 package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
+import pl.lesson4.kwasny.pawel.customer.CustomerDao;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
-import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
 import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.math.BigDecimal;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -66,42 +67,44 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
-    int customerIdToEdit;
-
-    public int getIdToEditCustomer(CustomerService customerService) {
-        do {
-            System.out.println("Enter the customer id number to edit :");
-            try {
-                customerIdToEdit = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter id number :");
-                scanner.nextLine();
-                customerIdToEdit = scanner.nextInt();
-            }
-        } while (checkCustomerId(customerService) == 0);
+// na tej zasadzie wszystko ma byc zrobione NIE PRZEKAZUJEMY TU ZADNYCH SERWISÓW !!!!
+    // jak chcesz wywolac metode to przed zmiennymi dodajesz typy parametrow, podajesz je tylko przy nagłówku metody
+    // w lini 86 w naglowku metody mam typy a pozniej w kodzie podaje juz jedynie zmienne tych typów
+    public int getIdToEditCustomer() {
+        int customerIdToEdit;
+        System.out.println("Enter the customer id number to edit :");
+        try {
+            customerIdToEdit = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+              System.out.println("You must enter id number :");
+              scanner.nextLine();
+              customerIdToEdit = scanner.nextInt();
+            return customerIdToEdit;
+        }
         return customerIdToEdit;
     }
 
-    public int checkCustomerId(CustomerService customerService) {
-        int checkedId = 0;
-        try {
-            for (Customer idFromList : customerService.find()) {
-                checkedId = idFromList.getId();
-                if (checkedId == customerIdToEdit) {
-                    checkedId = customerIdToEdit;
-                    break;
-                } else {
-                    checkedId = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        if (checkedId == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkedId;
-    }
+// lepiej zrobic zpaytanie
+//    public int getCustomerIdToCheck(List<Customer> customers, int customerIdToEdit) {
+//        int checkedId = 0;
+//        try {
+//            for (Customer idFromList : customers) {
+//                checkedId = idFromList.getId();
+//                if (checkedId == customerIdToEdit) {
+//                    checkedId = customerIdToEdit;
+//                    break;
+//                } else {
+//                    checkedId = 0;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        if (checkedId == 0) {
+//            System.out.println("There is no such ID in the database.");
+//        }
+//        return checkedId;
+//    }
 
     public String getNameToEditCustomer() {
         System.out.println("Enter name :");
@@ -137,8 +140,8 @@ public class UserIO {
         return nipNumberPattern.matcher(nipNumber).matches();
     }
 
-    public Customer prepareCustomerToEdit(CustomerService customerService) {
-        int id = getIdToEditCustomer(customerService);
+    public Customer prepareCustomerToEdit() {
+        int id = getIdToEditCustomer(); // jak tu przekazac wartosc z tej metody zeby nie dublowac zapytania ?!
         String name = getNameToEditCustomer();
         String nipNumber = getNipToEditCustomer();
         return new Customer(id, name, nipNumber);
@@ -630,13 +633,14 @@ public class UserIO {
     }
 
     int invoiceIdToDelete;
+
     public Invoice deleteInvoice(InvoiceService invoiceService) {
         do {
             System.out.println("Enter invoice id to delete:");
             invoiceIdToDelete = scanner.nextInt();
         } while (checkInvoiceIdToDelete(invoiceService) == 0);
         int id = invoiceIdToDelete;
-        return  new Invoice(id,null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+        return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     public int checkInvoiceIdToDelete(InvoiceService invoiceService) {
@@ -677,6 +681,7 @@ public class UserIO {
     }
 
     int productIdNumber;
+
     public int getProductIdToAddInvoiceItem(ProductService productService) {
         do {
             System.out.println("Enter invoice number:");
@@ -685,7 +690,7 @@ public class UserIO {
         return productIdNumber;
     }
 
-    public int checkIdToAddInvoiceItem( ProductService productService) {
+    public int checkIdToAddInvoiceItem(ProductService productService) {
         int checkId = 0;
         try {
             for (Product idFromList : productService.find()) {

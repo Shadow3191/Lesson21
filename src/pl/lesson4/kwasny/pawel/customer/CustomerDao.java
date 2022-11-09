@@ -7,10 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CustomerDao {
-    private PreparedStatement preparedStatement;
-    private String sql;
     private Connection connection;
-
 
     public CustomerDao(Connection connection) {
         this.connection = connection;
@@ -39,8 +36,36 @@ public class CustomerDao {
         }
     }
 
+    //
+    public Customer get(Integer id) {
+//        String sql;
+        PreparedStatement preparedStatement = null;
+        String sql = "select * from customer where id = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Customer(resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("nip_number"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
+
     public void add(Customer customer) {
-        sql = "insert into customer(name, nip_number) values (?, ?);";
+        String sql = "insert into customer(name, nip_number) values (?, ?);";
+        PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, customer.getName());
@@ -58,7 +83,9 @@ public class CustomerDao {
     }
 
     public void edit(Customer customer) {
-        sql = "update customer set name = ?, nip_number = ? where id = ?";
+        String sql = "update customer set name = ?, nip_number = ? where id = ?";
+        PreparedStatement preparedStatement = null;
+
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, customer.getName());
@@ -78,7 +105,8 @@ public class CustomerDao {
 
     public void delete(Customer customer) {
         deleteInvoicesContainingTheCustomerIdToDeleted(customer);
-        sql = "delete from customer where id = ?";
+        String sql = "delete from customer where id = ?";
+        PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, customer.getId());
@@ -95,7 +123,8 @@ public class CustomerDao {
     }
 
     public void deleteInvoicesContainingTheCustomerIdToDeleted(Customer customer) {
-        sql = "delete from invoice where customer_id = ?";
+        String sql = "delete from invoice where customer_id = ?";
+        PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, customer.getId());

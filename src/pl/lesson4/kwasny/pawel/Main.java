@@ -24,6 +24,7 @@ Program do rejestrowania FV obejmujacy 3 rzeczy :
  */
 
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
+import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
@@ -32,6 +33,7 @@ import pl.lesson4.kwasny.pawel.product.ProductService;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -70,7 +72,7 @@ public class Main {
             helpPoint = false;
             try {
                 choose = scanner.nextInt();
-            } catch (Exception exception) {
+            } catch (InputMismatchException ex) {
                 System.out.println("It's not a number! Enter correct number :");
                 helpPoint = true;
             }
@@ -87,7 +89,7 @@ public class Main {
                 helpPoint = false;
                 try {
                     choose = 0;
-                } catch (Exception exception) {
+                } catch (InputMismatchException ex) {
                     System.out.println("It's not a number! Enter correct number :");
                     helpPoint = true;
                 }
@@ -109,11 +111,10 @@ public class Main {
                                 if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
                                     System.out.println("This EAN code or product name is already in the database, check " +
                                             "the data and enter it again:");
-                                    error = true;
                                 } else {
                                     System.out.println("This EAN code has already been added to the database, re-enter another EAN code.");
-                                    error = true;
                                 }
+                                error = true;
                             }
                         } while (error == true);
 
@@ -133,11 +134,11 @@ public class Main {
                             "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
                     try {
                         choose = scanner.nextInt();
-                    } catch (Exception exception) {
+                    } catch (InputMismatchException ex) {
                         System.out.println("This is not a number, please enter the number correctly!");
                         choose = 0;
                     }
-                } catch (Exception exception) {
+                } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
@@ -158,11 +159,27 @@ public class Main {
                     } else if (choose == 2) {
                         customerService.add(userIO.preparedCustomerToAdd());
                     } else if (choose == 3) {
+                        // show all customers
                         userIO.showCustomers(customerService.find());
-                        customerService.edit(userIO.prepareCustomerToEdit(customerService));
+//                        customerService.get(id);
+//                        customerService.edit(userIO.getIdToEditCustomer());
+                        Customer customer;
+                        do {
+                            // gets the id from the user
+                            int id = userIO.getIdToEditCustomer();
+                            // checks if such id is in the database
+                            customer = customerService.get(id);
+                            if (customer == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (customer == null);
+                        // checks if such id is in the database
+//                        userIO.prepareCustomerToEdit();
+                        userIO.prepareCustomerToEdit();
+
                     } else if (choose == 4) {
                         userIO.showCustomers(customerService.find());
-                        customerService.delete(userIO.deleteCustomer(customerService));
+                        customerService.delete(userIO.deleteCustomer(customerService)); // w deleteCustomer -> nie mozna tu customerService przekazywac
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
@@ -172,7 +189,7 @@ public class Main {
                     System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n" +
                             "3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
-                } catch (Exception exception) {
+                } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again.");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
@@ -209,7 +226,7 @@ public class Main {
                     System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n" +
                             "3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
-                } catch (Exception exception) {
+                } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
@@ -249,7 +266,7 @@ public class Main {
                     System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n" +
                             "3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
                     choose = scanner.nextInt();
-                } catch (Exception exception) {
+                } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
