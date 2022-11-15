@@ -153,33 +153,31 @@ public class Main {
             do {
                 try {
                     CustomerService customerService = new CustomerService(connection);
-                    if (choose == 1) {
+                    Customer customer;
+
+                    if (choose == 1) { // show customer
                         userIO.showCustomers(customerService.find());
                         userIO.checkingEmptyItems(customerService.find());
-                    } else if (choose == 2) {
+                    } else if (choose == 2) { // add customer
                         customerService.add(userIO.preparedCustomerToAdd());
-                    } else if (choose == 3) {
-                        // show all customers
+                    } else if (choose == 3) { // edit customer
                         userIO.showCustomers(customerService.find());
-//                        customerService.get(id);
-//                        customerService.edit(userIO.getIdToEditCustomer());
-                        Customer customer;
                         do {
-                            // gets the id from the user
-                            int id = userIO.getIdToEditCustomer();
-                            // checks if such id is in the database
-                            customer = customerService.get(id);
+                            customer = customerService.get(userIO.getIdToEditCustomer());
                             if (customer == null) {
                                 System.out.println("This id number don't exist in base.");
                             }
                         } while (customer == null);
-                        // checks if such id is in the database
-//                        userIO.prepareCustomerToEdit();
-                        userIO.prepareCustomerToEdit();
-
-                    } else if (choose == 4) {
+                        customerService.edit(userIO.prepareCustomerToEdit(customer.getId()));
+                    } else if (choose == 4) { // delete customer
                         userIO.showCustomers(customerService.find());
-                        customerService.delete(userIO.deleteCustomer(customerService)); // w deleteCustomer -> nie mozna tu customerService przekazywac
+                        do {
+                            customer = customerService.get(userIO.getIdToDeleteCustomer());
+                            if (customer == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (customer == null);
+                        customerService.delete(userIO.deleteCustomer(customer.getId()));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
@@ -192,11 +190,11 @@ public class Main {
                 } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again.");
                 }
-                if (choose < 0 || choose > 4 && choose != 9) {
+                if (choose < 0 || choose > 5 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
             } while (choose != 9);
-            scanner.nextInt();
+//            scanner.nextInt();
         }
 
         if (choose == 3) {

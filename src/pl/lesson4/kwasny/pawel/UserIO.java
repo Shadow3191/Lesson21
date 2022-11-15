@@ -70,7 +70,7 @@ public class UserIO {
 // na tej zasadzie wszystko ma byc zrobione NIE PRZEKAZUJEMY TU ZADNYCH SERWISÓW !!!!
     // jak chcesz wywolac metode to przed zmiennymi dodajesz typy parametrow, podajesz je tylko przy nagłówku metody
     // w lini 86 w naglowku metody mam typy a pozniej w kodzie podaje juz jedynie zmienne tych typów
-    public int getIdToEditCustomer() {
+    public int getIdToEditCustomer() { // sprobowac zrobic woida i przypisaną wartość przekazywać
         int customerIdToEdit;
         System.out.println("Enter the customer id number to edit :");
         try {
@@ -116,7 +116,7 @@ public class UserIO {
         }
         Boolean correctName = isCorrectValue(name, namePattern);
         while (!correctName) {
-            System.out.println("You must enter the first name, which will be in capital letters");
+            System.out.println("Enter the name of which only the first letter will be capitalized.");
             System.out.println("Enter name :");
             name = scanner.nextLine();
             correctName = isCorrectValue(name, namePattern);
@@ -128,11 +128,11 @@ public class UserIO {
         System.out.println("Enter nip number in configuration 3-2-2-3 :");
         String nipNumber = scanner.nextLine();
         Boolean correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
-        do {
+        while (!correctNipNumber) {
             System.out.println("You must write here nip number ! \nEnter nip number in configuration 3-2-2-3 :");
             nipNumber = scanner.nextLine();
             correctNipNumber = isCorrectValue(nipNumber, nipNumberPattern);
-        } while (!correctNipNumber);
+        }
         return nipNumber;
     }
 
@@ -140,44 +140,33 @@ public class UserIO {
         return nipNumberPattern.matcher(nipNumber).matches();
     }
 
-    public Customer prepareCustomerToEdit() {
-        int id = getIdToEditCustomer(); // jak tu przekazac wartosc z tej metody zeby nie dublowac zapytania ?!
+    public Customer prepareCustomerToEdit(Integer id) {
+//        int id = getIdToEditCustomer(); // jak tu przekazac wartosc z tej metody zeby nie dublowac zapytania ?!
         String name = getNameToEditCustomer();
         String nipNumber = getNipToEditCustomer();
         return new Customer(id, name, nipNumber);
     }
 
-    int customerIdToDelete;
 
-    public Customer deleteCustomer(CustomerService customerService) {
-        do {
-            System.out.println("Enter customer id number to delete:");
+
+    public int getIdToDeleteCustomer() {
+        int customerIdToDelete;
+        System.out.println("Enter the customer id number to delete :");
+        try {
             customerIdToDelete = scanner.nextInt();
-        } while (checkCustomerIdToDelete(customerService) == 0);
-        int id = customerIdToDelete;
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            customerIdToDelete = scanner.nextInt();
+            return customerIdToDelete;
+        }
+        return customerIdToDelete;
+    }
+
+    public Customer deleteCustomer(Integer id) {
         return new Customer(id, null, null);
     }
 
-    public int checkCustomerIdToDelete(CustomerService customerService) {
-        int checkedIdToDelete = 0;
-        try {
-            for (Customer customerId : customerService.find()) {
-                checkedIdToDelete = customerId.getId();
-                if (checkedIdToDelete == customerIdToDelete) {
-                    checkedIdToDelete = customerIdToDelete;
-                    break;
-                } else {
-                    checkedIdToDelete = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        if (checkedIdToDelete == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkedIdToDelete;
-    }
 
     //TODO poprawić cały kod w product !
     public void showProduct(List<Product> products) {
@@ -587,9 +576,10 @@ public class UserIO {
         return checkedId;
     }
 
-    int customerId;
 
     public int getCustomerIdToInvoiceEdit(CustomerService customerService) {
+        int customerId;
+
         do {
             System.out.println("Enter customer id edit invoice :");
             try {
@@ -604,6 +594,7 @@ public class UserIO {
     }
 
     public int checkedCustomerId(CustomerService customerService) {
+        int customerId = 0;
         int existInBase = 0;
         try {
             for (Customer idFromList : customerService.find()) {

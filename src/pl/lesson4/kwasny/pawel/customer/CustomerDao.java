@@ -38,7 +38,6 @@ public class CustomerDao {
 
     //
     public Customer get(Integer id) {
-//        String sql;
         PreparedStatement preparedStatement = null;
         String sql = "select * from customer where id = ?;";
         try {
