@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class InvoiceService {
@@ -11,7 +10,7 @@ public class InvoiceService {
         invoiceDao = new InvoiceDao(connection);
     }
 
-    public List<Invoice> find() throws SQLException {
+    public List<Invoice> find() {
         return invoiceDao.find();
     }
 

@@ -23,11 +23,11 @@ Program do rejestrowania FV obejmujacy 3 rzeczy :
 - NIP
  */
 
-import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
+import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.sql.Connection;
@@ -83,47 +83,39 @@ public class Main {
         } while (helpPoint == true);
 
 
-        if (choose == 1) {
-//            helpPoint = false;
-            do {
-                helpPoint = false;
-                try {
-                    choose = 0;
-                } catch (InputMismatchException ex) {
-                    System.out.println("It's not a number! Enter correct number :");
-                    helpPoint = true;
-                }
-            } while (helpPoint == true);
-
+        if (choose == 1) { // - start product
+            choose = 0;
             do {
                 try {
                     ProductService productService = new ProductService(connection);
-
+                    Product product;
                     if (choose == 1) {
                         userIO.showProduct(productService.find());
                     } else if (choose == 2) {
-                        boolean error;
-                        do {
-                            error = false;
-                            try {
-                                productService.add(userIO.prepareProductToAdd(productService));
-                            } catch (SQLException sqlException) {
-                                if (sqlException.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
-                                    System.out.println("This EAN code or product name is already in the database, check " +
-                                            "the data and enter it again:");
-                                } else {
-                                    System.out.println("This EAN code has already been added to the database, re-enter another EAN code.");
-                                }
-                                error = true;
-                            }
-                        } while (error == true);
-
+                        productService.add(userIO.prepareProductToAdd());
                     } else if (choose == 3) {
                         userIO.showProduct(productService.find());
-                        productService.edit(userIO.prepareProductToEdit(productService));
+                        if (productService.find().isEmpty()) { // TODO jak to ogarnać aby nie sprawdzać 2 razy ?
+                            choose = 0;
+                            System.out.println("You have no one to edit, add some product first");
+                            break;
+                        }
+                        do {
+                            product = productService.get(userIO.getIdToEditProduct());
+                            if (product == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (product == null);
+                        productService.edit(userIO.prepareProductToEdit(product.getId()));
                     } else if (choose == 4) {
                         userIO.showProduct(productService.find());
-                        productService.delete(userIO.deleteProduct(productService));
+                        do {
+                            product = productService.get(userIO.getIdToDeleteProduct());
+                            if (product == null) {
+                                System.out.println("This id don't exist in base.");
+                            }
+                        } while (product == null);
+                        productService.delete(userIO.deleteProduct(product.getId()));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
@@ -141,11 +133,11 @@ public class Main {
                 } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
-                if (choose < 0 || choose > 4 && choose != 9) {
+                if (choose < 0 || choose > 5 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
             } while (choose != 9);
-        }
+        } // finish product
 
 
         if (choose == 2) {
@@ -154,20 +146,44 @@ public class Main {
                 try {
                     CustomerService customerService = new CustomerService(connection);
                     Customer customer;
+//                    Customer customerName;
+//                    Customer customerNip;
 
                     if (choose == 1) { // show customer
                         userIO.showCustomers(customerService.find());
-                        userIO.checkingEmptyItems(customerService.find());
+
+//                        userIO.checkingEmptyItemsInCustomer(customerService.find()); // TODO tak sprawdzać wolne miejsca czy w inny sposób ?! tak jak e metodie get ?
                     } else if (choose == 2) { // add customer
                         customerService.add(userIO.preparedCustomerToAdd());
                     } else if (choose == 3) { // edit customer
                         userIO.showCustomers(customerService.find());
+                        if (customerService.find().isEmpty()) { // TODO jak to zrobić zeby 2 raz nie sprawdzało customerSerwive.find() ??
+                            choose = 0;
+                            System.out.println("You have no one to edit, add some customer first.");
+                            break;
+                        }
                         do {
-                            customer = customerService.get(userIO.getIdToEditCustomer());
+                            customer = customerService.get(userIO.getIdToEditCustomer()); // sprawdzenie czy jest juz takie id w bazie
                             if (customer == null) {
                                 System.out.println("This id number don't exist in base.");
                             }
                         } while (customer == null);
+
+//                        do {
+//                            customerName = customerService.getName(userIO.getNameToEditCustomer());
+//                            if (customerName != null) {
+//                                System.out.println("This customer already exist in database.");
+//                            }
+//                        } while (customerName != null);
+
+//                        do {
+//                            customerNip = customerService.getNip(userIO.getNipToEditCustomer());
+//                            if (customerNip != null) {
+//                                System.out.println("This nip already exist in database.");
+//                            }
+//                        } while (customerNip != null);
+
+
                         customerService.edit(userIO.prepareCustomerToEdit(customer.getId()));
                     } else if (choose == 4) { // delete customer
                         userIO.showCustomers(customerService.find());
@@ -213,7 +229,7 @@ public class Main {
                         invoiceService.edit(userIO.prepareInvoiceToEdit(invoiceService, customerService));
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.delete(userIO.deleteInvoice(invoiceService));
+//                        invoiceService.delete(userIO.deleteInvoice());
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {

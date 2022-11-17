@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel;
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
-import pl.lesson4.kwasny.pawel.customer.CustomerDao;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
@@ -27,12 +26,7 @@ public class UserIO {
             System.out.format("%3s| %20s| %14s|", customer.getId(), customer.getName(), customer.getNipNumber());
             System.out.println();
         }
-        System.out.println();
-    }
-
-    // TODO dodać takie w innych klasach
-    public void checkingEmptyItems(List<Customer> customers) {
-        if (customers != null && customers.isEmpty()) {
+        if (customers.isEmpty()) {
             System.out.println("No customers have been added yet.\n");
         }
     }
@@ -67,7 +61,7 @@ public class UserIO {
         return new Customer(name, nipNumber);
     }
 
-// na tej zasadzie wszystko ma byc zrobione NIE PRZEKAZUJEMY TU ZADNYCH SERWISÓW !!!!
+    // na tej zasadzie wszystko ma byc zrobione NIE PRZEKAZUJEMY TU ZADNYCH SERWISÓW !!!!
     // jak chcesz wywolac metode to przed zmiennymi dodajesz typy parametrow, podajesz je tylko przy nagłówku metody
     // w lini 86 w naglowku metody mam typy a pozniej w kodzie podaje juz jedynie zmienne tych typów
     public int getIdToEditCustomer() { // sprobowac zrobic woida i przypisaną wartość przekazywać
@@ -76,9 +70,9 @@ public class UserIO {
         try {
             customerIdToEdit = scanner.nextInt();
         } catch (InputMismatchException ex) {
-              System.out.println("You must enter id number :");
-              scanner.nextLine();
-              customerIdToEdit = scanner.nextInt();
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            customerIdToEdit = scanner.nextInt();
             return customerIdToEdit;
         }
         return customerIdToEdit;
@@ -148,7 +142,6 @@ public class UserIO {
     }
 
 
-
     public int getIdToDeleteCustomer() {
         int customerIdToDelete;
         System.out.println("Enter the customer id number to delete :");
@@ -182,47 +175,47 @@ public class UserIO {
         System.out.println();
     }
 
-    String eanCode;
-
-    public String getEanToAddProduct(ProductService productService) {
+    public String getEanToAddProduct() {
+        System.out.println("Enter the 13-digit EAN code :");
+        String eanCode = scanner.nextLine();
+        boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
         do {
-            System.out.println("Enter the 13-digit EAN code :");
-            eanCode = scanner.nextLine();
-            boolean correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
-            do {
-                if (!correctEanCode) {
-                    System.out.println("You must enter 13-digit code !");
-                    eanCode = scanner.nextLine();
-                    correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
-                }
-            } while (correctEanCode == false);
-        } while (checkEan(productService) == null);
+            if (!correctEanCode) {
+                System.out.println("You must enter 13-digit code !");
+                eanCode = scanner.nextLine();
+                correctEanCode = isCorrectEanValue(eanCode, correctEanPattern);
+            } else {
+                correctEanCode = true;
+            }
+        } while (!correctEanCode);
         return eanCode;
     }
 
-    public String checkEan(ProductService productService) {
-        String existInBase = null;
-        try {
-            for (Product eanFromList : productService.find()) {
-                existInBase = eanFromList.getEanCode();
-                if (eanCode.equals(existInBase)) {
-                    System.out.println("This EAN number already exist in base.");
-                    existInBase = null;
-                    break;
-                } else {
-                    existInBase = eanCode;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong!");
-        }
-        return existInBase;
-    }
+//    public String checkEan(ProductService productService) {
+//        String existInBase = null;
+//        String eanCode = null;
+//        try {
+//            for (Product eanFromList : productService.find()) {
+//                existInBase = eanFromList.getEanCode();
+//                if (eanCode.equals(existInBase)) {
+//                    System.out.println("This EAN number already exist in base.");
+//                    existInBase = null;
+//                    break;
+//                } else {
+//                    existInBase = eanCode;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong!");
+//        }
+//        return existInBase;
+//    }
 
 
-    String name;
 
-    public String getProductNameToAdd(ProductService productService) {
+    // do poprawy
+    public String getProductNameToAdd() {
+        String name;
         do {
             System.out.println("Enter name of product :");
             name = scanner.nextLine();
@@ -230,28 +223,28 @@ public class UserIO {
                 System.out.println("Name can't be null, wright product name :");
                 name = scanner.nextLine();
             }
-        } while (checkTheName(productService) == null);
+        } while (name == null);
         return name;
     }
 
-    public String checkTheName(ProductService productService) {
-        String chelpPoint = null;
-        try {
-            for (Product checkedName : productService.find()) {
-                String existInBase = checkedName.getName().toLowerCase();
-                if (name.toLowerCase().equals(existInBase)) {
-                    System.out.println("This name of the product already exist in the base.");
-                    chelpPoint = null;
-                    break;
-                } else {
-                    chelpPoint = name;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        return chelpPoint;
-    }
+//    public String checkTheName(ProductService productService) {
+//        String chelpPoint = null;
+//        try {
+//            for (Product checkedName : productService.find()) {
+//                String existInBase = checkedName.getName().toLowerCase();
+//                if (name.toLowerCase().equals(existInBase)) {
+//                    System.out.println("This name of the product already exist in the base.");
+//                    chelpPoint = null;
+//                    break;
+//                } else {
+//                    chelpPoint = name;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        return chelpPoint;
+//    }
 
     public BigDecimal getProductNetPriceToAdd() {
         BigDecimal netPrice = null;
@@ -288,9 +281,9 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToAdd(ProductService productService) {
-        String eanCode = getEanToAddProduct(productService);
-        String name = getProductNameToAdd(productService);
+    public Product prepareProductToAdd() {
+        String eanCode = getEanToAddProduct();
+        String name = getProductNameToAdd();
         BigDecimal netPrice = getProductNetPriceToAdd();
         BigDecimal taxPercent = getTaxPercentToAdd();
         return new Product(eanCode, name, netPrice, taxPercent);
@@ -300,42 +293,43 @@ public class UserIO {
         return correctEanPattern.matcher(eanCode).matches();
     }
 
-    int productIdToEdit;
 
-    public int getIdToEditProduct(ProductService productService) {
-        do {
-            System.out.println("Enter the id number you want to edit :");
-            try {
-                productIdToEdit = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter id number :");
-                scanner.nextLine();
-                productIdToEdit = scanner.nextInt();
-            }
-        } while (checkedProductId(productService) == 0);
+    public int getIdToEditProduct() {
+        int productIdToEdit;
+        System.out.println("Enter the id number you want to edit :");
+        try {
+            productIdToEdit = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            productIdToEdit = scanner.nextInt();
+            return productIdToEdit;
+        }
         return productIdToEdit;
     }
 
-    public int checkedProductId(ProductService productService) {
-        int checkedId = 0;
-        try {
-            for (Product idFromList : productService.find()) {
-                checkedId = idFromList.getId();
-                if (checkedId == productIdToEdit) {
-                    checkedId = productIdToEdit;
-                    break;
-                } else {
-                    checkedId = 0;
-                }
-            }
-            if (checkedId == 0) {
-                System.out.println("There is no such ID in the database.");
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        return checkedId;
-    }
+    // poniższe ogarnąć aby w zapytaniu do bazy danych się sprawdzało !
+//    public int checkedProductId(ProductService productService) {
+//        int productIdToEdit;
+//        int checkedId = 0;
+//        try {
+//            for (Product idFromList : productService.find()) {
+//                checkedId = idFromList.getId();
+//                if (checkedId == productIdToEdit) {
+//                    checkedId = productIdToEdit;
+//                    break;
+//                } else {
+//                    checkedId = 0;
+//                }
+//            }
+//            if (checkedId == 0) {
+//                System.out.println("There is no such ID in the database.");
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        return checkedId;
+//    }
 
 
     public String getEanToEditProduct() {
@@ -355,46 +349,46 @@ public class UserIO {
 
     String productNameToEdit;
 
-    public String getProductNameToEdit(ProductService productService) {
-        do {
-            System.out.println("Enter name of product :");
+    public String getProductNameToEdit() {
+//        do {
+        System.out.println("Enter name of product :");
+        productNameToEdit = scanner.nextLine();
+        while (productNameToEdit.length() == 0) {
+            System.out.println("Name can't be null, wright product name :");
             productNameToEdit = scanner.nextLine();
-            while (productNameToEdit.length() == 0) {
-                System.out.println("Name can't be null, wright product name :");
-                productNameToEdit = scanner.nextLine();
-            }
-        } while (checkProductNameToEdit(productService) == null);
+        }
+//        } while (checkProductNameToEdit(productService) == null);
         return productNameToEdit;
     }
 
-    public String checkProductNameToEdit(ProductService productService) {
-        String chelpPoint = null;
-        try {
-            for (Product checkedName : productService.find()) {
-                String existInBase = checkedName.getName().toLowerCase();
+//    public String checkProductNameToEdit(ProductService productService) {
+//        String chelpPoint = null;
+//        try {
+//            for (Product checkedName : productService.find()) {
+//                String existInBase = checkedName.getName().toLowerCase();
+//
+//                if (productNameToEdit.toLowerCase().equals(existInBase)) {
+//                    if (productIdToEdit == checkedName.getId()) {
+//                        System.out.println("You have changed the product name as it was before.");
+//                        chelpPoint = productNameToEdit;
+//                    } else {
+//                        System.out.println("This name of the product already exist in the base.");
+//                        chelpPoint = null;
+//                        break;
+//                    }
+//                } else {
+//                    chelpPoint = productNameToEdit;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        return chelpPoint;
+//    }
 
-                if (productNameToEdit.toLowerCase().equals(existInBase)) {
-                    if (productIdToEdit == checkedName.getId()) {
-                        System.out.println("You have changed the product name as it was before.");
-                        chelpPoint = productNameToEdit;
-                    } else {
-                        System.out.println("This name of the product already exist in the base.");
-                        chelpPoint = null;
-                        break;
-                    }
-                } else {
-                    chelpPoint = productNameToEdit;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        return chelpPoint;
-    }
-
-    BigDecimal netPrice = null;
 
     public BigDecimal getProductNetPriceToEdit() {
+        BigDecimal netPrice = null;
         int helpPoint1 = 0;
         System.out.println("Enter net price :");
         while (helpPoint1 != 1) {
@@ -427,47 +421,54 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToEdit(ProductService productService) {
-        int id = getIdToEditProduct(productService);
+    public Product prepareProductToEdit(Integer id) {
+//        int id = getIdToEditProduct();
         String eanCode = getEanToEditProduct();
-        String name = getProductNameToEdit(productService);
+        String name = getProductNameToEdit();
         BigDecimal netPrice = getProductNetPriceToEdit();
         BigDecimal taxPercent = getProductTaxPercentToEdit();
         return new Product(id, eanCode, name, netPrice, taxPercent);
     }
 
-    int productIdToDelete;
 
-    public Product deleteProduct(ProductService productService) {
-        do {
-            System.out.println("Enter product id number to delete:");
-            productIdToDelete = scanner.nextInt();
-        } while (checkProductIdToDelete(productService) == 0);
-        int id = productIdToDelete;
-        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
-    }
-
-    public int checkProductIdToDelete(ProductService productService) {
-        int checkedIdToDelete = 0;
+    public int getIdToDeleteProduct() {
+        int productIdToDelete;
+        System.out.println("Enter product id number to delete:");
         try {
-            for (Product productId : productService.find()) {
-                checkedIdToDelete = productId.getId();
-                if (checkedIdToDelete == productIdToDelete) {
-                    checkedIdToDelete = productIdToDelete;
-                    break;
-                } else {
-                    checkedIdToDelete = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
+            productIdToDelete = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            productIdToDelete = scanner.nextInt();
+            return productIdToDelete;
         }
-        if (checkedIdToDelete == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkedIdToDelete;
+        return productIdToDelete;
     }
 
+//    public int checkProductIdToDelete(ProductService productService) {
+//        int checkedIdToDelete = 0;
+//        try {
+//            for (Product productId : productService.find()) {
+//                checkedIdToDelete = productId.getId();
+//                if (checkedIdToDelete == productIdToDelete) {
+//                    checkedIdToDelete = productIdToDelete;
+//                    break;
+//                } else {
+//                    checkedIdToDelete = 0;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        if (checkedIdToDelete == 0) {
+//            System.out.println("There is no such ID in the database.");
+//        }
+//        return checkedIdToDelete;
+//    }
+
+    public Product deleteProduct(Integer id) {
+        return new Product(id,null,null,BigDecimal.ZERO,BigDecimal.ZERO);
+    }
 
     public void showInvoices(List<Invoice> invoices) {
         for (Invoice invoice : invoices) {
@@ -625,35 +626,31 @@ public class UserIO {
 
     int invoiceIdToDelete;
 
-    public Invoice deleteInvoice(InvoiceService invoiceService) {
-        do {
-            System.out.println("Enter invoice id to delete:");
-            invoiceIdToDelete = scanner.nextInt();
-        } while (checkInvoiceIdToDelete(invoiceService) == 0);
-        int id = invoiceIdToDelete;
+    public Invoice deleteInvoice(Integer id) {
+
         return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    public int checkInvoiceIdToDelete(InvoiceService invoiceService) {
-        int checkedIdToDelete = 0;
-        try {
-            for (Invoice invoiceId : invoiceService.find()) {
-                checkedIdToDelete = invoiceId.getId();
-                if (checkedIdToDelete == invoiceIdToDelete) {
-                    checkedIdToDelete = invoiceIdToDelete;
-                    break;
-                } else {
-                    checkedIdToDelete = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        if (checkedIdToDelete == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkedIdToDelete;
-    }
+//    public int checkInvoiceIdToDelete(InvoiceService invoiceService) {
+//        int checkedIdToDelete = 0;
+//        try {
+//            for (Invoice invoiceId : invoiceService.find()) {
+//                checkedIdToDelete = invoiceId.getId();
+//                if (checkedIdToDelete == invoiceIdToDelete) {
+//                    checkedIdToDelete = invoiceIdToDelete;
+//                    break;
+//                } else {
+//                    checkedIdToDelete = 0;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        if (checkedIdToDelete == 0) {
+//            System.out.println("There is no such ID in the database.");
+//        }
+//        return checkedIdToDelete;
+//    }
 
     boolean emptyDatabase = false;
 

@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel.customer;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class CustomerService {
@@ -11,13 +10,20 @@ public class CustomerService {
         customerDao = new CustomerDao(connection);
     }
 
-    public List<Customer> find() throws SQLException {
+    public List<Customer> find() {
         return customerDao.find();
     }
 
     public Customer get(Integer id) {
         return customerDao.get(id);
     }
+
+//    public Customer getName(String name) {
+//        return customerDao.getName(name);
+//    }
+//    public Customer getNip(String nipNumber) {
+//        return customerDao.getNip(nipNumber);
+//    }
 
     public void add(Customer customer) {
         customerDao.add(customer);

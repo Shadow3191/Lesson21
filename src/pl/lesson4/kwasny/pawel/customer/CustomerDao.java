@@ -13,11 +13,13 @@ public class CustomerDao {
         this.connection = connection;
     }
 
-    public List<Customer> find() throws SQLException {
-        Statement selectStmt = connection.createStatement();
-        ResultSet resultSet = selectStmt.executeQuery("select * from customer;");
+    public List<Customer> find() {
+        Statement selectStmt = null;
+        ResultSet resultSet = null;
         List<Customer> customers = new LinkedList<>();
         try {
+            selectStmt = connection.createStatement();
+            resultSet = selectStmt.executeQuery("select * from customer;");
             while (resultSet.next()) {
                 customers.add(new Customer(resultSet.getInt("id"),
                         resultSet.getString("name"),
@@ -29,21 +31,22 @@ public class CustomerDao {
             try {
                 resultSet.close();
                 selectStmt.close();
-                return customers;
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
+        return customers;
     }
 
     //
     public Customer get(Integer id) {
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         String sql = "select * from customer where id = ?;";
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return new Customer(resultSet.getInt("id"),
                         resultSet.getString("name"),
@@ -56,11 +59,66 @@ public class CustomerDao {
         } finally {
             try {
                 preparedStatement.close();
+                resultSet.close(); // TODO czy też ma być zamknięty ?
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
     }
+
+//    public Customer getName(String name) {
+//        PreparedStatement preparedStatement = null;
+//        ResultSet resultSet = null;
+//        String sql = "select * from customer where name = ?;";
+//        try {
+//            preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, name);
+//            resultSet = preparedStatement.executeQuery();
+//            if (resultSet.next()) {
+//                return new Customer(resultSet.getInt("id"),
+//                        resultSet.getString("name"),
+//                        resultSet.getString("nip_number"));
+//            } else {
+//                return null;
+//            }
+//        } catch (SQLException sqlException) {
+//            throw new DatabaseException(sqlException.getMessage(), sqlException);
+//        } finally {
+//            try {
+//                preparedStatement.close();
+//                resultSet.close(); // TODO czy też ma być zamknięty ?
+//            } catch (SQLException sqlException) {
+//                throw new DatabaseException(sqlException.getMessage(), sqlException);
+//            }
+//        }
+//    }
+//
+//    public Customer getNip(String nipNumber) {
+//        PreparedStatement preparedStatement = null;
+//        ResultSet resultSet = null;
+//        String sql = "select * from customer where nip_number = ?;";
+//        try {
+//            preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, nipNumber);
+//            resultSet = preparedStatement.executeQuery();
+//            if (resultSet.next()) {
+//                return new Customer(resultSet.getInt("id"),
+//                        resultSet.getString("name"),
+//                        resultSet.getString("nip_number"));
+//            } else {
+//                return null;
+//            }
+//        } catch (SQLException sqlException) {
+//            throw new DatabaseException(sqlException.getMessage(), sqlException);
+//        } finally {
+//            try {
+//                preparedStatement.close();
+//                resultSet.close(); // TODO czy też ma być zamknięty ?
+//            } catch (SQLException sqlException) {
+//                throw new DatabaseException(sqlException.getMessage(), sqlException);
+//            }
+//        }
+//    }
 
     public void add(Customer customer) {
         String sql = "insert into customer(name, nip_number) values (?, ?);";

@@ -1,7 +1,8 @@
 package pl.lesson4.kwasny.pawel.product;
 
+import pl.lesson4.kwasny.pawel.customer.Customer;
+
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ProductService {
@@ -11,17 +12,16 @@ public class ProductService {
         productDao = new ProductDao(connection);
     }
 
-    public List<Product> find() throws SQLException {
-
+    public List<Product> find() {
         return productDao.find();
     }
 
-    public void add(Product product) throws SQLException {
-        try {
-            productDao.add(product);
-        } catch (SQLException sqlException){
-            throw sqlException;
-        }
+    public Product get(Integer id) {
+        return productDao.get(id);
+    }
+
+    public void add(Product product) {
+        productDao.add(product);
     }
 
     public void edit(Product product) {
