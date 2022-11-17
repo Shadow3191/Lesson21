@@ -15,24 +15,65 @@ public class ProductDao {
         this.connection = connection;
     }
 
-    public List<Product> find() throws SQLException {
-        Statement selectStmt = connection.createStatement();
-        ResultSet resultSet = selectStmt.executeQuery("Select * from product");
+    public List<Product> find() {
+        ResultSet resultSet = null;
+        Statement selectStmt = null;
         List<Product> products = new LinkedList<>();
-        while (resultSet.next()) {
-            products.add(new Product(
-                    resultSet.getInt("id"),
-                    resultSet.getString("ean_code"),
-                    resultSet.getString("name"),
-                    resultSet.getBigDecimal("price_net"),
-                    resultSet.getBigDecimal("tax_percent")));
+        try {
+            selectStmt = connection.createStatement();
+            resultSet = selectStmt.executeQuery("Select * from product");
+            while (resultSet.next()) {
+                products.add(new Product(
+                        resultSet.getInt("id"),
+                        resultSet.getString("ean_code"),
+                        resultSet.getString("name"),
+                        resultSet.getBigDecimal("price_net"),
+                        resultSet.getBigDecimal("tax_percent")));
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                resultSet.close();
+                selectStmt.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
         }
-        resultSet.close();
-        selectStmt.close();
         return products;
     }
 
-    public void add(Product product) throws SQLException {
+    public Product get(Integer id) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "select * from product where id = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Product(resultSet.getInt("id"),
+                        resultSet.getString("ean_code"),
+                        resultSet.getString("name"),
+                        resultSet.getBigDecimal("price_net"),
+                        resultSet.getBigDecimal("tax_percent"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+                resultSet.close();// TODO czy też ma być zamknięte ?
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
+
+
+    public void add(Product product) {
         sql = "insert into product(ean_code, name, price_net, tax_percent) values (?, ?, ?, ?);";
         try {
             preparedStatement = connection.prepareStatement(sql);
@@ -41,8 +82,10 @@ public class ProductDao {
             preparedStatement.setBigDecimal(3, product.getNetPrice());
             preparedStatement.setBigDecimal(4, product.getTaxPercent());
             preparedStatement.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            System.out.println("The EAN code or product name is already in the database.\n");
         } catch (SQLException sqlException) {
-            throw sqlException;
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
         } finally {
             try {
                 preparedStatement.close();
@@ -62,6 +105,8 @@ public class ProductDao {
             preparedStatement.setBigDecimal(4, product.getTaxPercent());
             preparedStatement.setInt(5, product.getId());
             preparedStatement.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            System.out.println("The EAN code or product name is already in the database.\n");
         } catch (SQLException sqlException) {
             throw new DatabaseException(sqlException.getMessage(), sqlException);
         } finally {

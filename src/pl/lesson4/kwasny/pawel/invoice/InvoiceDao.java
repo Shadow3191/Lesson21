@@ -15,11 +15,13 @@ public class InvoiceDao {
         this.connection = connection;
     }
 
-    public List<Invoice> find() throws SQLException {
-        Statement selectStmt = connection.createStatement();
-        ResultSet resultSet = selectStmt.executeQuery("select * from invoice;");
+    public List<Invoice> find()  {
+        Statement selectStmt = null;
+        ResultSet resultSet = null;
         List<Invoice> invoices = new LinkedList<>();
         try {
+            selectStmt = connection.createStatement();
+            resultSet = selectStmt.executeQuery("select * from invoice;");
             while (resultSet.next()) {
                 invoices.add(new Invoice(resultSet.getInt("id"),
                         resultSet.getString("number"),
@@ -33,11 +35,11 @@ public class InvoiceDao {
             try {
                 resultSet.close();
                 selectStmt.close();
-                return invoices;
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
+        return invoices;
     }
 
     public void add(Invoice invoice) {
