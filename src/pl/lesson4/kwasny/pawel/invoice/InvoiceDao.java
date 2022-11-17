@@ -1,6 +1,7 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
+import pl.lesson4.kwasny.pawel.customer.Customer;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -40,6 +41,35 @@ public class InvoiceDao {
             }
         }
         return invoices;
+    }
+
+    public Invoice get(Integer id) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "select * from invoice where id = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Invoice(resultSet.getInt("id"),
+                        resultSet.getString("number"),
+                        resultSet.getInt("customer_id"),
+                        resultSet.getBigDecimal("price_net_sum"),
+                        resultSet.getBigDecimal("price_gross_sum"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+                resultSet.close(); // TODO czy też ma być zamknięty ?
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
     public void add(Invoice invoice) {

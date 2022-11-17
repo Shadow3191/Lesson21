@@ -161,7 +161,6 @@ public class UserIO {
     }
 
 
-    //TODO poprawić cały kod w product !
     public void showProduct(List<Product> products) {
         System.out.println("Products :");
         for (Product product : products) {
@@ -212,8 +211,6 @@ public class UserIO {
 //    }
 
 
-
-    // do poprawy
     public String getProductNameToAdd() {
         String name;
         do {
@@ -296,7 +293,7 @@ public class UserIO {
 
     public int getIdToEditProduct() {
         int productIdToEdit;
-        System.out.println("Enter the id number you want to edit :");
+        System.out.println("Enter the id number to edit :");
         try {
             productIdToEdit = scanner.nextInt();
         } catch (InputMismatchException ex) {
@@ -350,14 +347,12 @@ public class UserIO {
     String productNameToEdit;
 
     public String getProductNameToEdit() {
-//        do {
         System.out.println("Enter name of product :");
         productNameToEdit = scanner.nextLine();
         while (productNameToEdit.length() == 0) {
             System.out.println("Name can't be null, wright product name :");
             productNameToEdit = scanner.nextLine();
         }
-//        } while (checkProductNameToEdit(productService) == null);
         return productNameToEdit;
     }
 
@@ -467,52 +462,56 @@ public class UserIO {
 //    }
 
     public Product deleteProduct(Integer id) {
-        return new Product(id,null,null,BigDecimal.ZERO,BigDecimal.ZERO);
+        return new Product(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     public void showInvoices(List<Invoice> invoices) {
         for (Invoice invoice : invoices) {
-            System.out.format("%3s| %15s| %3s| %5s| %5s|", invoice.getId(), invoice.getNumber(), invoice.getCustomerID(), invoice.getPriceNetSum(), invoice.getPriceGrossSum());
+            System.out.format("%3s| %15s| %3s| %5s| %5s|", invoice.getId(), invoice.getNumber(), invoice.getCustomerID(),
+                    invoice.getPriceNetSum(), invoice.getPriceGrossSum());
             System.out.println();
         }
-        if (invoices != null && invoices.isEmpty()) {
-            System.out.println("This database is empty - don't have added any position.\n");
+        if (invoices.isEmpty()) {
+            System.out.println("This database is empty - don't have added any position.");
         }
         System.out.println();
-
     }
 
     public String getInvoiceNumberToAdd() {
         System.out.println("Enter invoice number :");
+        scanner.nextLine();
         String number = scanner.nextLine();
+        while (number.length() == 0) {
+            System.out.println("Invoice number can't be null, right invoice number :");
+        }
         return number;
     }
 
     public int getCustomerIdToAddInvoice() {
-        System.out.println("Enter the customer id from the list above :");
-        int customerId = scanner.nextInt();
+        int customerId;
+        System.out.println("Assign a customer ID from the list above to the invoice :");
+        customerId = scanner.nextInt();
         return customerId;
     }
 
-    public Invoice prepareInvoiceToAdd() {
+    public Invoice prepareInvoiceToAdd(Integer id) {
         String number = getInvoiceNumberToAdd();
-        int customerId = getCustomerIdToAddInvoice();
+        int customerId = id;
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     int invoiceIdToEdit;
 
-    public int getInvoiceIdToEdit(InvoiceService invoiceService) {
-        do {
-            System.out.println("Enter id number of invoice who you want to edit :");
-            try {
-                invoiceIdToEdit = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter id number :");
-                scanner.nextLine();
-                invoiceIdToEdit = scanner.nextInt();
-            }
-        } while (checkInvoiceIdToEdit(invoiceService) == 0);
+    public int getIdToEditInvoice() {
+        int invoiceIdToEdit;
+        System.out.println("Enter the invoice id number to edit :");
+        try {
+            invoiceIdToEdit = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            invoiceIdToEdit = scanner.nextInt();
+        }
         return invoiceIdToEdit;
     }
 
@@ -537,60 +536,57 @@ public class UserIO {
         return checkedId;
     }
 
-    String invoiceNumberToEdit;
 
-    public String getInvoiceNumberToEdit(InvoiceService invoiceService) {
+    public String getInvoiceNumberToEdit() {
         scanner.nextLine();
-        do {
-            System.out.println("Enter the invoice number :");
-            try {
-                invoiceNumberToEdit = scanner.nextLine();
-            } catch (Exception exception) {
-                System.out.println("Something went wrong.");
-            }
-        } while (checkInvoiceNumberToEdit(invoiceService) == null);
+        String invoiceNumberToEdit = null;
+        System.out.println("Enter the invoice number to edit :");
+        invoiceNumberToEdit = scanner.nextLine();
+//        try {
+//            invoiceNumberToEdit = scanner.nextLine();
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
         return invoiceNumberToEdit;
     }
+//
+//    public String checkInvoiceNumberToEdit(InvoiceService invoiceService) {
+//        String checkedId = null;
+//        try {
+//            for (Invoice idFromList : invoiceService.find()) {
+//                String existInBase = idFromList.getNumber().toLowerCase();
+//                if (invoiceNumberToEdit.toLowerCase().equals(existInBase)) {
+//                    if (invoiceIdToEdit == idFromList.getId()) {
+//                        System.out.println("You have changed the invoice number as it was before.");
+//                        checkedId = invoiceNumberToEdit;
+//                        break;
+//                    } else {
+//                        System.out.println("This number of the invoice already exist in the base.");
+//                        checkedId = null;
+//                        break;
+//                    }
+//                } else {
+//                    checkedId = invoiceNumberToEdit;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        return checkedId;
+//    }
 
-    public String checkInvoiceNumberToEdit(InvoiceService invoiceService) {
-        String checkedId = null;
-        try {
-            for (Invoice idFromList : invoiceService.find()) {
-                String existInBase = idFromList.getNumber().toLowerCase();
-                if (invoiceNumberToEdit.toLowerCase().equals(existInBase)) {
-                    if (invoiceIdToEdit == idFromList.getId()) {
-                        System.out.println("You have changed the invoice number as it was before.");
-                        checkedId = invoiceNumberToEdit;
-                        break;
-                    } else {
-                        System.out.println("This number of the invoice already exist in the base.");
-                        checkedId = null;
-                        break;
-                    }
-                } else {
-                    checkedId = invoiceNumberToEdit;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        return checkedId;
-    }
 
-
-    public int getCustomerIdToInvoiceEdit(CustomerService customerService) {
+    public int getCustomerIdToInvoiceEdit() {
         int customerId;
-
-        do {
-            System.out.println("Enter customer id edit invoice :");
+            System.out.println("Enter customer id to edit invoice :");
             try {
                 customerId = scanner.nextInt();
-            } catch (Exception exception) {
+            } catch (InputMismatchException ex) {
                 System.out.println("You must enter id number :");
                 scanner.nextLine();
                 customerId = scanner.nextInt();
+                return customerId;
             }
-        } while (checkedCustomerId(customerService) == 0);
         return customerId;
     }
 
@@ -617,17 +613,26 @@ public class UserIO {
         return existInBase;
     }
 
-    public Invoice prepareInvoiceToEdit(InvoiceService invoiceService, CustomerService customerService) {
-        int id = getInvoiceIdToEdit(invoiceService);
-        String number = getInvoiceNumberToEdit(invoiceService);
-        int customerId = getCustomerIdToInvoiceEdit(customerService);
+    public Invoice prepareInvoiceToEdit(Integer id, Integer customerId) {
+        String number = getInvoiceNumberToEdit();
         return new Invoice(id, number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    int invoiceIdToDelete;
+    public int getIdToDeleteInvoice() {
+        int invoiceIdToDelete;
+        System.out.println("Enter the customer id number to delete :");
+        try {
+            invoiceIdToDelete = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
+            scanner.nextLine();
+            invoiceIdToDelete = scanner.nextInt();
+            return invoiceIdToDelete;
+        }
+        return invoiceIdToDelete;
+    }
 
     public Invoice deleteInvoice(Integer id) {
-
         return new Invoice(id, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 

@@ -25,6 +25,7 @@ Program do rejestrowania FV obejmujacy 3 rzeczy :
 
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
+import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
 import pl.lesson4.kwasny.pawel.product.Product;
@@ -219,17 +220,51 @@ public class Main {
                 try {
                     InvoiceService invoiceService = new InvoiceService(connection);
                     CustomerService customerService = new CustomerService(connection);
+                    Invoice invoice = null;
+                    Customer customer;
                     if (choose == 1) {
                         userIO.showInvoices(invoiceService.find());
                     } else if (choose == 2) {
+                        System.out.println("Customers list:");
                         userIO.showCustomers(customerService.find());
-                        invoiceService.add(userIO.prepareInvoiceToAdd());
+                        do {
+                            customer = customerService.get(userIO.getCustomerIdToAddInvoice());
+                            if (customer == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (customer == null);
+                        invoiceService.add(userIO.prepareInvoiceToAdd(customer.getId()));
                     } else if (choose == 3) {
                         userIO.showInvoices(invoiceService.find());
-                        invoiceService.edit(userIO.prepareInvoiceToEdit(invoiceService, customerService));
+                        if (invoiceService.find().isEmpty()) {
+                            choose = 0;
+                            System.out.println("You have no one to edit, add some invoice first");
+                            break;
+                        }
+                        do {
+                            invoice = invoiceService.get(userIO.getIdToEditInvoice());
+                            if (invoice == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (invoice == null);
+                        System.out.println("Customers list :");
+                        userIO.showCustomers(customerService.find());
+                        do {
+                            customer = customerService.get(userIO.getIdToEditCustomer());
+                            if (customer == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (customer == null);
+                        invoiceService.edit(userIO.prepareInvoiceToEdit(invoice.getId(), customer.getId()));
                     } else if (choose == 4) {
                         userIO.showInvoices(invoiceService.find());
-//                        invoiceService.delete(userIO.deleteInvoice());
+                        do {
+                            invoice = invoiceService.get(userIO.getIdToDeleteInvoice());
+                            if (invoice == null){
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (invoice == null);
+                        invoiceService.delete(userIO.deleteInvoice(invoice.getId()));
                     } else if (choose == 5) {
                         break;
                     } else if (choose == 9) {
