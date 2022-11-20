@@ -1,6 +1,5 @@
 package pl.lesson4.kwasny.pawel.product;
 
-import pl.lesson4.kwasny.pawel.customer.Customer;
 
 import java.sql.Connection;
 import java.util.List;

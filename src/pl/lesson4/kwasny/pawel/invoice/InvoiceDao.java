@@ -65,7 +65,7 @@ public class InvoiceDao {
         } finally {
             try {
                 preparedStatement.close();
-                resultSet.close(); // TODO czy też ma być zamknięty ?
+                resultSet.close();//
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }

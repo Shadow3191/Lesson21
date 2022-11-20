@@ -65,12 +65,41 @@ public class ProductDao {
         } finally {
             try {
                 preparedStatement.close();
-                resultSet.close();// TODO czy też ma być zamknięte ?
+                resultSet.close();
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
         }
     }
+
+//    public Product getName(String name) {
+//        PreparedStatement preparedStatement = null;
+//        ResultSet resultSet = null;
+//        String sql = "select * from product where name = ?;";
+//        try {
+//            preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, name);
+//            resultSet = preparedStatement.executeQuery();
+//            if (resultSet.next()) {
+//                return new Product(resultSet.getInt("id"),
+//                        resultSet.getString("ean_code"),
+//                        resultSet.getString("name"),
+//                        resultSet.getBigDecimal("price_net"),
+//                        resultSet.getBigDecimal("tax_percent"));
+//            } else {
+//                return null;
+//            }
+//        } catch (SQLException sqlException) {
+//            throw new DatabaseException(sqlException.getMessage(), sqlException);
+//        } finally {
+//            try {
+//                preparedStatement.close();
+//                resultSet.close();
+//            } catch (SQLException sqlException) {
+//                throw new DatabaseException(sqlException.getMessage(), sqlException);
+//            }
+//        }
+//    }
 
 
     public void add(Product product) {

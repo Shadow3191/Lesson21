@@ -1,5 +1,7 @@
 package pl.lesson4.kwasny.pawel.invoiceItem;
 
+import pl.lesson4.kwasny.pawel.product.Product;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -12,6 +14,10 @@ public class InvoiceItemService {
 
     public List<InvoiceItem> find() {
         return invoiceItemDao.find();
+    }
+
+    public InvoiceItem get(Integer id) {
+        return invoiceItemDao.get(id);
     }
 
     public void add(InvoiceItem invoiceItem) {

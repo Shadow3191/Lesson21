@@ -3,10 +3,8 @@ package pl.lesson4.kwasny.pawel;
 import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
-import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.product.Product;
-import pl.lesson4.kwasny.pawel.product.ProductService;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -162,13 +160,12 @@ public class UserIO {
 
 
     public void showProduct(List<Product> products) {
-        System.out.println("Products :");
         for (Product product : products) {
             System.out.format("%3s| %13s| %19s| %6s| %6s|", product.getId(), product.getEanCode(), product.getName(),
                     product.getNetPrice(), product.getTaxPercent());
             System.out.println();
         }
-        if (products != null && products.isEmpty()) {
+        if (products.isEmpty()) {
             System.out.println("This database is empty - don't have added any position\n");
         }
         System.out.println();
@@ -245,38 +242,38 @@ public class UserIO {
 
     public BigDecimal getProductNetPriceToAdd() {
         BigDecimal netPrice = null;
-        int helpPoint = 0;
-        System.out.println("Enter product price :");
-        while (helpPoint != 1) {
-            helpPoint = 1;
+        boolean correctNetPrice = true;
+        do {
             try {
+                System.out.println("Enter product price :");
                 netPrice = scanner.nextBigDecimal();
-            } catch (Exception exception) {
-                System.out.println("It isn't a price ! Enter correct price :");
-                helpPoint = 0;
+                correctNetPrice = true;
+            } catch (InputMismatchException ex) {
                 scanner.nextLine();
+                System.out.println("You must enter net price :");
+                correctNetPrice = false;
             }
-        }
+        } while (correctNetPrice == false);
         return netPrice;
     }
 
     public BigDecimal getTaxPercentToAdd() {
         BigDecimal taxPercent = null;
-        int helpPointTax = 0;
-        while (helpPointTax != 1) {
-            helpPointTax = 1;
-            System.out.println("Enter tax percent :");
+        boolean correctTaxPercent = true;
+        do {
             try {
+                System.out.println("Enter tax percent :");
                 taxPercent = scanner.nextBigDecimal();
-            } catch (Exception exception) {
-                System.out.println("It isn't a tax percent, enter correct value !");
-                helpPointTax = 0;
+                correctTaxPercent = true;
+            } catch (InputMismatchException ex) {
+                scanner.nextLine(); // TODO dlaczego tu działa a wyżej po scannerze nie działało ??
+                System.out.println("You must enter tax percent :");
+                correctTaxPercent = false;
             }
-            scanner.nextLine();
-        }
-        System.out.println();
+        } while (correctTaxPercent == false);
         return taxPercent;
     }
+
 
     public Product prepareProductToAdd() {
         String eanCode = getEanToAddProduct();
@@ -291,19 +288,34 @@ public class UserIO {
     }
 
 
-    public int getIdToEditProduct() {
-        int productIdToEdit;
-        System.out.println("Enter the id number to edit :");
-        try {
-            productIdToEdit = scanner.nextInt();
-        } catch (InputMismatchException ex) {
-            System.out.println("You must enter id number :");
-            scanner.nextLine();
-            productIdToEdit = scanner.nextInt();
-            return productIdToEdit;
-        }
-        return productIdToEdit;
-    }
+//        public int getIdToEditProduct () {
+//            int productIdToEdit;
+//            System.out.println("Enter the id number to edit :");
+//            try {
+//                productIdToEdit = scanner.nextInt();
+//            } catch (InputMismatchException ex) {
+//                System.out.println("You must enter id number :");
+//                scanner.nextLine();
+//                productIdToEdit = scanner.nextInt();
+//                return productIdToEdit;
+//            }
+//            return productIdToEdit;
+//        }
+
+//    public int getProductId () {
+//        System.out.println("Enter product id from the list above:");
+//        int productId;
+//        try {
+//            productId = scanner.nextInt();
+//        } catch (InputMismatchException ex) {
+//            System.out.println("You must enter number :");
+//            scanner.nextLine();
+//            productId = scanner.nextInt();
+//            return productId;
+//        }
+//        return productId;
+//    }
+
 
     // poniższe ogarnąć aby w zapytaniu do bazy danych się sprawdzało !
 //    public int checkedProductId(ProductService productService) {
@@ -344,9 +356,9 @@ public class UserIO {
         return eanCode;
     }
 
-    String productNameToEdit;
 
     public String getProductNameToEdit() {
+        String productNameToEdit;
         System.out.println("Enter name of product :");
         productNameToEdit = scanner.nextLine();
         while (productNameToEdit.length() == 0) {
@@ -416,8 +428,8 @@ public class UserIO {
         return taxPercent;
     }
 
-    public Product prepareProductToEdit(Integer id) {
-//        int id = getIdToEditProduct();
+    public Product prepareProductToEdit(Product product) {
+        int id = product.getId();
         String eanCode = getEanToEditProduct();
         String name = getProductNameToEdit();
         BigDecimal netPrice = getProductNetPriceToEdit();
@@ -427,18 +439,22 @@ public class UserIO {
 
 
     public int getIdToDeleteProduct() {
-        int productIdToDelete;
-        System.out.println("Enter product id number to delete:");
-        try {
-            productIdToDelete = scanner.nextInt();
-        } catch (InputMismatchException ex) {
-            System.out.println("You must enter id number :");
-            scanner.nextLine();
-            productIdToDelete = scanner.nextInt();
-            return productIdToDelete;
-        }
+        int productIdToDelete = 0;
+        boolean correctProductId = true;
+        do {
+            try {
+                System.out.println("Enter product id number to delete:");
+                productIdToDelete = scanner.nextInt();
+                correctProductId = true;
+            } catch (InputMismatchException ex) {
+                System.out.println("You must enter id number :");
+                scanner.nextLine();
+                correctProductId = false;
+            }
+        } while (correctProductId == false);
         return productIdToDelete;
     }
+
 
 //    public int checkProductIdToDelete(ProductService productService) {
 //        int checkedIdToDelete = 0;
@@ -488,9 +504,8 @@ public class UserIO {
     }
 
     public int getCustomerIdToAddInvoice() {
-        int customerId;
         System.out.println("Assign a customer ID from the list above to the invoice :");
-        customerId = scanner.nextInt();
+        int customerId = scanner.nextInt();
         return customerId;
     }
 
@@ -500,7 +515,6 @@ public class UserIO {
         return new Invoice(number, customerId, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
-    int invoiceIdToEdit;
 
     public int getIdToEditInvoice() {
         int invoiceIdToEdit;
@@ -515,26 +529,26 @@ public class UserIO {
         return invoiceIdToEdit;
     }
 
-    public int checkInvoiceIdToEdit(InvoiceService invoiceService) {
-        int checkedId = 0;
-        try {
-            for (Invoice idFromList : invoiceService.find()) {
-                checkedId = idFromList.getId();
-                if (checkedId == invoiceIdToEdit) {
-                    checkedId = invoiceIdToEdit;
-                    break;
-                } else {
-                    checkedId = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        if (checkedId == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkedId;
-    }
+//    public int checkInvoiceIdToEdit(InvoiceService invoiceService) {
+//        int checkedId = 0;
+//        try {
+//            for (Invoice idFromList : invoiceService.find()) {
+//                checkedId = idFromList.getId();
+//                if (checkedId == invoiceIdToEdit) {
+//                    checkedId = invoiceIdToEdit;
+//                    break;
+//                } else {
+//                    checkedId = 0;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        if (checkedId == 0) {
+//            System.out.println("There is no such ID in the database.");
+//        }
+//        return checkedId;
+//    }
 
 
     public String getInvoiceNumberToEdit() {
@@ -576,19 +590,19 @@ public class UserIO {
 //    }
 
 
-    public int getCustomerIdToInvoiceEdit() {
-        int customerId;
-            System.out.println("Enter customer id to edit invoice :");
-            try {
-                customerId = scanner.nextInt();
-            } catch (InputMismatchException ex) {
-                System.out.println("You must enter id number :");
-                scanner.nextLine();
-                customerId = scanner.nextInt();
-                return customerId;
-            }
-        return customerId;
-    }
+//    public int getCustomerIdToInvoiceEdit() {
+//        int customerId;
+//        System.out.println("Enter customer id to edit invoice :");
+//        try {
+//            customerId = scanner.nextInt();
+//        } catch (InputMismatchException ex) {
+//            System.out.println("You must enter id number :");
+//            scanner.nextLine();
+//            customerId = scanner.nextInt();
+//            return customerId;
+//        }
+//        return customerId;
+//    }
 
     public int checkedCustomerId(CustomerService customerService) {
         int customerId = 0;
@@ -673,73 +687,60 @@ public class UserIO {
         }
     }
 
-    int productIdNumber;
 
-    public int getProductIdToAddInvoiceItem(ProductService productService) {
-        do {
-            System.out.println("Enter invoice number:");
-            productIdNumber = scanner.nextInt();
-        } while (checkIdToAddInvoiceItem(productService) == 0);
+    public int getProductIdToAddInvoiceItem() {
+        System.out.println("Assign a product ID from the list above to the invoice item:");
+        int productIdNumber = scanner.nextInt();
         return productIdNumber;
     }
 
-    public int checkIdToAddInvoiceItem(ProductService productService) {
-        int checkId = 0;
-        try {
-            for (Product idFromList : productService.find()) {
-                checkId = idFromList.getId();
-                if (checkId == productIdNumber) {
-                    checkId = productIdNumber;
-                    break;
-                } else {
-                    checkId = 0;
-                }
-            }
-        } catch (Exception exception) {
-            System.out.println("Something went wrong.");
-        }
-        if (checkId == 0) {
-            System.out.println("There is no such ID in the database.");
-        }
-        return checkId;
-    }
+//    public int checkIdToAddInvoiceItem(ProductService productService) {
+//        int checkId = 0;
+//        try {
+//            for (Product idFromList : productService.find()) {
+//                checkId = idFromList.getId();
+//                if (checkId == productIdNumber) {
+//                    checkId = productIdNumber;
+//                    break;
+//                } else {
+//                    checkId = 0;
+//                }
+//            }
+//        } catch (Exception exception) {
+//            System.out.println("Something went wrong.");
+//        }
+//        if (checkId == 0) {
+//            System.out.println("There is no such ID in the database.");
+//        }
+//        return checkId;
+//    }
 
 
     public int getInvoiceIdToAddInvoiceItem() {
-        System.out.println("Enter the invoice id from the list above :");
-        int invoiceId = 0;
-        boolean helpPoint2 = false;
-        do {
-            helpPoint2 = false;
-            try {
-                invoiceId = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter a number ! Enter correct invoice id number :");
-                helpPoint2 = true;
-            }
-            scanner.nextLine();
-        } while (helpPoint2 == true);
+        System.out.println("Assign a product ID from the list above to the invoice item:");
+        int invoiceId = scanner.nextInt();
         return invoiceId;
     }
 
-    public int getProductQuantityToAddInvoiceItem() {
-        System.out.println("Enter the product quantity :");
+    public int getProductQuantityToAddInvoiceItem() {   // TODO jak zabezpieczyć to przez podaniem Stringa ? - TO SPRAWDZIC CZY DZIALA
         int quantity = 0;
-        boolean helpPoint3 = false;
+        boolean correctQuantity = true;
         do {
-            helpPoint3 = false;
             try {
+                System.out.println("Enter the product quantity :");
                 quantity = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("You must enter a number ! Enter correct quantity number :");
-                helpPoint3 = true;
+                scanner.nextLine();
+                correctQuantity = true;
+            } catch (InputMismatchException ex) {
+                System.out.println("You must enter quantity :");
+                correctQuantity = false;
             }
-            scanner.nextLine();
-        } while (helpPoint3 == true);
+        } while (correctQuantity == false);
         return quantity;
     }
 
     public String getProductNameToAddInvoiceItem() {
+        scanner.nextLine();
         System.out.println("Enter the product name :");
         String productName = scanner.nextLine();
         return productName;
@@ -785,83 +786,76 @@ public class UserIO {
         return grossPrice;
     }
 
-    public InvoiceItem prepareInvoiceItemToAdd(ProductService productService) {
-        int productId = getProductIdToAddInvoiceItem(productService);
-        int invoiceId = getInvoiceIdToAddInvoiceItem();
+    // TODO tutaj jest ok zrobione na podstawie tego ogarnac try catche !!!!
+    public InvoiceItem prepareInvoiceItemToAdd(Integer productId, Integer invoiceId, String productName, BigDecimal
+            netPrice, BigDecimal taxPercent) {
+//        int productId = id;
+//        int invoiceId = getInvoiceIdToAddInvoiceItem();
         int quantity = getProductQuantityToAddInvoiceItem();
-        String productName = getProductNameToAddInvoiceItem();
-        BigDecimal netPrice = getNetPriceToAddInvoiceItem();
-        BigDecimal taxPercent = getTaxPercentToAddInvoiceItem();
+//        String productName = getProductNameToAddInvoiceItem();
+//        BigDecimal netPrice = getNetPriceToAddInvoiceItem();
+//        BigDecimal taxPercent = getTaxPercentToAddInvoiceItem();
         BigDecimal grossPrice = getGrossPrice(netPrice, taxPercent, quantity);
         return new InvoiceItem(productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
     }
 
 
-    public int getIdToEditInvoiceItem() {
-        System.out.println("Enter id from invoice item what you want to edit from the list above:");
-        int id = 0;
-        boolean helpPoint = false;
-        do {
-            helpPoint = false;
-            try {
-                id = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a a number ! Enter correct id invoice item number:");
-                helpPoint = true;
-            }
+    public int getInvoiceItemId() {
+        int id;
+        System.out.println("Enter invoice item id from the list above:");
+        try {
+            id = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter id number :");
             scanner.nextLine();
-        } while (helpPoint == true);
+            id = scanner.nextInt();
+            return id;
+        }
         return id;
     }
 
-    public int getProductIdToEditInvoiceItem() {
-        System.out.println("Enter product id who you want to edit from the list above:");
+    public int getProductId() {
         int productId = 0;
-        boolean helpPoint2 = false;
+        boolean correctId = true;
         do {
-            helpPoint2 = false;
             try {
+                System.out.println("Enter id number :");
                 productId = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a number! Enter correct product id number :");
-                helpPoint2 = true;
+                correctId = true;
+            } catch (InputMismatchException ex) {
+                System.out.println("You must enter number :");
+                scanner.nextLine();
+                correctId = false;
             }
-            scanner.nextLine();
-        } while (helpPoint2 == true);
+        } while (correctId == false);
         return productId;
     }
 
     public int getInvoiceIdToEditInvoiceItem() {
         System.out.println("Enter invoice id who you want to edit from the list above:");
-        int invoiceId = 0;
-        boolean helpPoint3 = false;
-        do {
-            helpPoint3 = false;
-            try {
-                invoiceId = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a number! Enter correct invoice id number :");
-                helpPoint3 = true;
-            }
+        int invoiceId;
+        try {
+            invoiceId = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            System.out.println("You must enter a number :");
             scanner.nextLine();
-        } while (helpPoint3 == true);
+            invoiceId = scanner.nextInt();
+            return invoiceId;
+        }
         return invoiceId;
     }
 
     public int getQuantityToEditInvoiceItem() {
+        int quantity;
         System.out.println("Enter quantity :");
-        int quantity = 0;
-        boolean helpPoint4 = false;
-        do {
-            helpPoint4 = false;
-            try {
-                quantity = scanner.nextInt();
-            } catch (Exception exception) {
-                System.out.println("It's not a number! Enter correct quantity number :");
-                helpPoint4 = true;
-            }
+        try {
+            quantity = scanner.nextInt();
+        } catch (InputMismatchException ex) { // TODO to change
+            System.out.println("You must enter quantity :");
             scanner.nextLine();
-        } while (helpPoint4 == true);
+            quantity = scanner.nextInt();
+            return quantity;
+        }
         return quantity;
     }
 
@@ -911,17 +905,11 @@ public class UserIO {
         return grossPrice;
     }
 
-    public InvoiceItem preparedToEditInvoiceItem() {
-        int id = getIdToEditInvoiceItem();
-        int productId = getProductIdToEditInvoiceItem();
-        int invoiceId = getInvoiceIdToEditInvoiceItem();
-        int quantity = getQuantityToEditInvoiceItem();
-        String productName = getProductNameToEditInvoiceItem();
-        BigDecimal netPrice = getNetPriceToEditInvoiceItem();
-        BigDecimal taxPercent = getTaxPercentToEditInvoiceItem();
-        BigDecimal grossPrice = getGrossPriceToEditInvoiceItem(netPrice, taxPercent, quantity);
-
-        return new InvoiceItem(id, productId, invoiceId, quantity, productName, netPrice, taxPercent, grossPrice);
+    // TODO THIS IS GOOD METHOD
+    public InvoiceItem preparedToEditInvoiceItem(InvoiceItem invoiceItem, Product product, Invoice invoice) {
+        BigDecimal grossPrice = getGrossPriceToEditInvoiceItem(getNetPriceToEditInvoiceItem(), product.getTaxPercent(), getQuantityToEditInvoiceItem());
+        return new InvoiceItem(invoiceItem.getId(), product.getId(), invoice.getId(), getQuantityToEditInvoiceItem(),
+                product.getName(), getNetPriceToEditInvoiceItem(), product.getTaxPercent(), grossPrice);
     }
 
     // TODO jak obzłużyć jeśli baza danych jest pusta zeby nie dalo się takiej wybrać do wpisania ?

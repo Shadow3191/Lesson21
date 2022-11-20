@@ -1,6 +1,7 @@
 package pl.lesson4.kwasny.pawel.invoiceItem;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
+import pl.lesson4.kwasny.pawel.product.Product;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -45,6 +46,38 @@ public class InvoiceItemDao {
             }
         }
         return invoiceItems;
+    }
+
+    public InvoiceItem get(Integer id) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "select * from invoice_item where id = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new InvoiceItem(resultSet.getInt("id"),
+                        resultSet.getInt("product_id"),
+                        resultSet.getInt("invoice_id"),
+                        resultSet.getInt("quantity"),
+                        resultSet.getString("product_name"),
+                        resultSet.getBigDecimal("price_net"),
+                        resultSet.getBigDecimal("tax_percent"),
+                        resultSet.getBigDecimal("price_gross"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+                resultSet.close();
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
     }
 
     public void add(InvoiceItem invoiceItem) {

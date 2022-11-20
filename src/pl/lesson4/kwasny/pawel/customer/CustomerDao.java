@@ -38,7 +38,6 @@ public class CustomerDao {
         return customers;
     }
 
-    //
     public Customer get(Integer id) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -59,7 +58,7 @@ public class CustomerDao {
         } finally {
             try {
                 preparedStatement.close();
-                resultSet.close(); // TODO czy też ma być zamknięty ?
+                resultSet.close(); // TODO czy też ma być zamknięty ? - TAK
             } catch (SQLException sqlException) {
                 throw new DatabaseException(sqlException.getMessage(), sqlException);
             }
@@ -86,7 +85,7 @@ public class CustomerDao {
 //        } finally {
 //            try {
 //                preparedStatement.close();
-//                resultSet.close(); // TODO czy też ma być zamknięty ?
+//                resultSet.close(); //
 //            } catch (SQLException sqlException) {
 //                throw new DatabaseException(sqlException.getMessage(), sqlException);
 //            }
@@ -113,7 +112,7 @@ public class CustomerDao {
 //        } finally {
 //            try {
 //                preparedStatement.close();
-//                resultSet.close(); // TODO czy też ma być zamknięty ?
+//                resultSet.close(); //
 //            } catch (SQLException sqlException) {
 //                throw new DatabaseException(sqlException.getMessage(), sqlException);
 //            }

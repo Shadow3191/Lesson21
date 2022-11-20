@@ -27,6 +27,7 @@ import pl.lesson4.kwasny.pawel.customer.Customer;
 import pl.lesson4.kwasny.pawel.customer.CustomerService;
 import pl.lesson4.kwasny.pawel.invoice.Invoice;
 import pl.lesson4.kwasny.pawel.invoice.InvoiceService;
+import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItem;
 import pl.lesson4.kwasny.pawel.invoiceItem.InvoiceItemService;
 import pl.lesson4.kwasny.pawel.product.Product;
 import pl.lesson4.kwasny.pawel.product.ProductService;
@@ -35,6 +36,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -64,7 +66,7 @@ public class Main {
         }
     }
 
-    private static void runOperation(Scanner scanner, Connection connection) throws SQLException {
+    private static void runOperation(Scanner scanner, Connection connection) {
         UserIO userIO = new UserIO();
         System.out.println("Select category :\n 1) Product \n 2) Customer \n 3) Invoice \n 4) Invoice Item \n 9) Close program");
         int choose = 0;
@@ -91,31 +93,25 @@ public class Main {
                     ProductService productService = new ProductService(connection);
                     Product product;
                     if (choose == 1) {
+                        System.out.println("Products :");
                         userIO.showProduct(productService.find());
                     } else if (choose == 2) {
                         productService.add(userIO.prepareProductToAdd());
                     } else if (choose == 3) {
-                        userIO.showProduct(productService.find());
-                        if (productService.find().isEmpty()) { // TODO jak to ogarnać aby nie sprawdzać 2 razy ?
+                        System.out.println("Products :");
+                        List<Product> products = productService.find();
+                        userIO.showProduct(products);
+                        if (products.isEmpty()) { // TODO jak to ogarnać aby nie sprawdzać 2 razy ? - tak jak wczesniej
                             choose = 0;
                             System.out.println("You have no one to edit, add some product first");
                             break;
                         }
-                        do {
-                            product = productService.get(userIO.getIdToEditProduct());
-                            if (product == null) {
-                                System.out.println("This id number don't exist in base.");
-                            }
-                        } while (product == null);
-                        productService.edit(userIO.prepareProductToEdit(product.getId()));
+                        product = getProductUntilIsNotValid(userIO,productService);
+                        productService.edit(userIO.prepareProductToEdit(product));
                     } else if (choose == 4) {
+                        System.out.println("Products :");
                         userIO.showProduct(productService.find());
-                        do {
-                            product = productService.get(userIO.getIdToDeleteProduct());
-                            if (product == null) {
-                                System.out.println("This id don't exist in base.");
-                            }
-                        } while (product == null);
+                        product = getProductUntilIsNotValid(userIO,productService);
                         productService.delete(userIO.deleteProduct(product.getId()));
                     } else if (choose == 5) {
                         break;
@@ -125,13 +121,19 @@ public class Main {
                     }
                     System.out.println("What you want to do :\n1. Show products \n2. Add product \n" +
                             "3. Edit product \n4. Delete product \n5. Back to menu \n9. Close program");
-                    try {
-                        choose = scanner.nextInt();
-                    } catch (InputMismatchException ex) {
-                        System.out.println("This is not a number, please enter the number correctly!");
-                        choose = 0;
-                    }
-                } catch (InputMismatchException ex) {
+                    boolean correctChose = true;
+                    do {
+                       try {
+                           choose = scanner.nextInt();
+                           correctChose = true;
+                       } catch (InputMismatchException ex) {
+                           scanner.nextLine();
+                           System.out.println("This is not a number, please enter the number correctly!");
+                           correctChose = false;
+//                           choose = 0;
+                       }
+                   } while (correctChose == false);
+                } catch (InputMismatchException ex) { // TODO check that
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 5 && choose != 9) {
@@ -144,7 +146,7 @@ public class Main {
         if (choose == 2) {
             choose = 0;
             do {
-                try {
+                try { // TODO check that
                     CustomerService customerService = new CustomerService(connection);
                     Customer customer;
 //                    Customer customerName;
@@ -152,13 +154,12 @@ public class Main {
 
                     if (choose == 1) { // show customer
                         userIO.showCustomers(customerService.find());
-
-//                        userIO.checkingEmptyItemsInCustomer(customerService.find()); // TODO tak sprawdzać wolne miejsca czy w inny sposób ?! tak jak e metodie get ?
                     } else if (choose == 2) { // add customer
                         customerService.add(userIO.preparedCustomerToAdd());
                     } else if (choose == 3) { // edit customer
-                        userIO.showCustomers(customerService.find());
-                        if (customerService.find().isEmpty()) { // TODO jak to zrobić zeby 2 raz nie sprawdzało customerSerwive.find() ??
+                        List<Customer> customers = customerService.find();
+                        userIO.showCustomers(customers);
+                        if (customers.isEmpty()) { // TODO jak to zrobić zeby 2 raz nie sprawdzało customerSerwive.find()  - tak jak wyzej
                             choose = 0;
                             System.out.println("You have no one to edit, add some customer first.");
                             break;
@@ -203,7 +204,17 @@ public class Main {
                     }
                     System.out.println("What you want to do :\n1. Show customers \n2. Add customer \n" +
                             "3. Edit customer \n4. Delete customer \n5. Back to menu \n9. Close program");
-                    choose = scanner.nextInt();
+                    boolean correctChose = true;
+                    do {
+                        try {
+                            choose = scanner.nextInt();
+                            correctChose = true;
+                        } catch (InputMismatchException ex) {
+                            scanner.nextLine();
+                            System.out.println("This is not a number, please enter the number correctly!");
+                            correctChose = false;
+                        }
+                    } while (correctChose == false);
                 } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again.");
                 }
@@ -211,7 +222,6 @@ public class Main {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
             } while (choose != 9);
-//            scanner.nextInt();
         }
 
         if (choose == 3) {
@@ -235,8 +245,9 @@ public class Main {
                         } while (customer == null);
                         invoiceService.add(userIO.prepareInvoiceToAdd(customer.getId()));
                     } else if (choose == 3) {
-                        userIO.showInvoices(invoiceService.find());
-                        if (invoiceService.find().isEmpty()) {
+                        List<Invoice> invoices = invoiceService.find();
+                        userIO.showInvoices(invoices);
+                        if (invoices.isEmpty()) {
                             choose = 0;
                             System.out.println("You have no one to edit, add some invoice first");
                             break;
@@ -260,7 +271,7 @@ public class Main {
                         userIO.showInvoices(invoiceService.find());
                         do {
                             invoice = invoiceService.get(userIO.getIdToDeleteInvoice());
-                            if (invoice == null){
+                            if (invoice == null) {
                                 System.out.println("This id number don't exist in base.");
                             }
                         } while (invoice == null);
@@ -274,14 +285,23 @@ public class Main {
 
                     System.out.println("What you want to do :\n1. Show invoices \n2. Add invoice \n" +
                             "3. Edit invoice \n4. Delete invoice \n5. Back to menu \n9. Close program");
-                    choose = scanner.nextInt();
+                    boolean correctChose = true;
+                    do {
+                        try {
+                            choose = scanner.nextInt();
+                            correctChose = true;
+                        } catch (InputMismatchException ex) {
+                            scanner.nextLine();
+                            System.out.println("This is not a number, please enter the number correctly!");
+                            correctChose = false;
+                        }
+                    } while (correctChose == false);
                 } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-//                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 4) {
@@ -290,21 +310,57 @@ public class Main {
             InvoiceItemService invoiceItemService = new InvoiceItemService(connection);
             ProductService productService = new ProductService(connection);
             InvoiceService invoiceService = new InvoiceService(connection);
+            Product product;
+            Invoice invoice;
+            InvoiceItem invoiceItem = null;
             do {
                 try {
                     if (choose == 1) {
                         userIO.showInvoiceItem(invoiceItemService.find());
                     } else if (choose == 2) {
-                        userIO.showProduct(productService.find());
-                        userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd(productService));
+                        System.out.println("Products list :");
+                        List<Product> products = productService.find();
+                        userIO.showProduct(products);
+                        if (products.isEmpty()) {
+                            choose = 0;
+                            System.out.println("You have no one invoice to add, add some invoice first");
+                            break;
+                        }
+                        do {
+                            product = productService.get(userIO.getProductIdToAddInvoiceItem());
+                            if (product == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (product == null);
+                        System.out.println("Invoices list:");
+                        List<Invoice> invoices = invoiceService.find(); // TODO Ther's we have correct !!!
+                        userIO.showInvoices(invoices);
+                        if (invoices.isEmpty()) {
+                            choose = 0; // TODO change chis choose on enum !!!
+                            System.out.println("You have no one invoice to add, add some invoice first");
+                            break;
+                        }
+                        do {
+                            invoice = invoiceService.get(userIO.getInvoiceIdToAddInvoiceItem());
+                            if (invoice == null) {
+                                System.out.println("This id number don't exist in base.");
+                            }
+                        } while (invoice == null);
+                        invoiceItemService.add(userIO.prepareInvoiceItemToAdd(product.getId(),invoice.getId(), product.getName(),
+                                product.getNetPrice(), product.getTaxPercent())); // TODO skoro wcześniej już była podawana cene i nazwa produktu to czy powinno być tak - przekazywac invoice itp jak wczeniej
                     } else if (choose == 3) {
-                        userIO.showInvoiceItem(invoiceItemService.find());
+                        System.out.println("Invoice item list :");
+                        userIO.showInvoiceItem(invoiceItemService.find()); // change names
+                        getInvoiceItemUntilIsNotValid(userIO, invoiceItemService);
+                        System.out.println("Products list :");
                         userIO.showProduct(productService.find());
+                        product = getProductUntilIsNotValid(userIO, productService);
+                        System.out.println("Invoice list :");
                         userIO.showInvoices(invoiceService.find());
-                        invoiceItemService.edit(userIO.preparedToEditInvoiceItem());
+                        invoice = getInvoiceUntilIsNotValid(userIO, invoiceService);
+                        invoiceItemService.edit(userIO.preparedToEditInvoiceItem(invoiceItem, product, invoice));
                     } else if (choose == 4) {
-                        userIO.showInvoiceItem(invoiceItemService.find());
+                        userIO.showInvoiceItem(invoiceItemService.find());//TODO I download by get after id, if it returned something, I don't go in, if it passes, I remove it
                         invoiceItemService.delete(userIO.deleteInvoiceItem());
                     } else if (choose == 5) {
                         break;
@@ -314,19 +370,60 @@ public class Main {
                     }
                     System.out.println("What you want to do :\n1. Show invoice item \n2. Add invoice item \n" +
                             "3. Edit invoice item \n4. Delete invoice item \n5. Back to menu \n9. Close program");
-                    choose = scanner.nextInt();
+                    boolean correctChose = true;
+                    do {
+                        try {
+                            choose = scanner.nextInt();
+                            correctChose = true;
+                        } catch (InputMismatchException ex) {
+                            scanner.nextLine();
+                            System.out.println("This is not a number, please enter the number correctly!");
+                            correctChose = false;
+                        }
+                    } while (correctChose == false);
                 } catch (InputMismatchException ex) {
                     System.out.println("This is not a correct number, please try again:\n");
                 }
                 if (choose < 0 || choose > 4 && choose != 9) {
                     System.out.println("Enter a number from 1 - 5 or press 9 to exit the program. :\n");
                 }
-                scanner.nextLine();
             } while (choose != 9);
         }
         if (choose == 9) {
             System.out.println("You close program, see you next time !");
             System.exit(0);
         }
+    }
+
+    private static Invoice getInvoiceUntilIsNotValid(UserIO userIO, InvoiceService invoiceService) {
+        Invoice invoice;
+        do {
+            invoice = invoiceService.get(userIO.getInvoiceIdToEditInvoiceItem());
+            if (invoice == null) {
+                System.out.println("This number don't exist in base.");
+            }
+        } while (invoice == null);
+        return invoice;
+    }
+
+    private static Product getProductUntilIsNotValid(UserIO userIO, ProductService productService) {
+        Product product;
+        do {
+            product = productService.get(userIO.getProductId());
+            if (product == null) {
+                System.out.println("This number don't exist in base.");
+            }
+        } while (product == null);
+        return product;
+    }
+
+    private static void getInvoiceItemUntilIsNotValid(UserIO userIO, InvoiceItemService invoiceItemService) {
+        InvoiceItem invoiceItem;
+        do {
+            invoiceItem = invoiceItemService.get(userIO.getInvoiceItemId());
+            if (invoiceItem == null){
+                System.out.println("This id number don't exist in base.");
+            }
+        } while (invoiceItem == null);
     }
 }
