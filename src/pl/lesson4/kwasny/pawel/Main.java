@@ -149,7 +149,7 @@ public class Main {
                 try { // TODO check that
                     CustomerService customerService = new CustomerService(connection);
                     Customer customer;
-//                    Customer customerName;
+                    Customer customerName;
                     Customer customerNip;
 
                     if (choose == 1) { // show customer
@@ -165,8 +165,8 @@ public class Main {
                             break;
                         }
 // =============================================== skonczylem ponizej ogarnac jak to dziala przy walidacji i poatrzec na ten kod
-                        getCustomerUntilIsNotValid(userIO, customerService);
-                        getCustomerNameUntilIsNotValid(userIO, customerService);
+                        customer = getCustomerUntilIsNotValid(userIO, customerService);
+                        customerName = getCustomerNameUntilIsNotValid(userIO, customerService);
 
                         do {
                             customerNip = customerService.getNip(userIO.getNipToEditCustomer());
@@ -385,7 +385,7 @@ public class Main {
         }
     }
 
-    private static void getCustomerNameUntilIsNotValid(UserIO userIO, CustomerService customerService) {
+    private static Customer getCustomerNameUntilIsNotValid(UserIO userIO, CustomerService customerService) {
         Customer customerName;
         do {
             customerName = customerService.getName(userIO.getCustomerName());
