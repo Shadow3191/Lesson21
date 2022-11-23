@@ -65,59 +65,59 @@ public class CustomerDao {
         }
     }
 
-//    public Customer getName(String name) {
-//        PreparedStatement preparedStatement = null;
-//        ResultSet resultSet = null;
-//        String sql = "select * from customer where name = ?;";
-//        try {
-//            preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, name);
-//            resultSet = preparedStatement.executeQuery();
-//            if (resultSet.next()) {
-//                return new Customer(resultSet.getInt("id"),
-//                        resultSet.getString("name"),
-//                        resultSet.getString("nip_number"));
-//            } else {
-//                return null;
-//            }
-//        } catch (SQLException sqlException) {
-//            throw new DatabaseException(sqlException.getMessage(), sqlException);
-//        } finally {
-//            try {
-//                preparedStatement.close();
-//                resultSet.close(); //
-//            } catch (SQLException sqlException) {
-//                throw new DatabaseException(sqlException.getMessage(), sqlException);
-//            }
-//        }
-//    }
-//
-//    public Customer getNip(String nipNumber) {
-//        PreparedStatement preparedStatement = null;
-//        ResultSet resultSet = null;
-//        String sql = "select * from customer where nip_number = ?;";
-//        try {
-//            preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, nipNumber);
-//            resultSet = preparedStatement.executeQuery();
-//            if (resultSet.next()) {
-//                return new Customer(resultSet.getInt("id"),
-//                        resultSet.getString("name"),
-//                        resultSet.getString("nip_number"));
-//            } else {
-//                return null;
-//            }
-//        } catch (SQLException sqlException) {
-//            throw new DatabaseException(sqlException.getMessage(), sqlException);
-//        } finally {
-//            try {
-//                preparedStatement.close();
-//                resultSet.close(); //
-//            } catch (SQLException sqlException) {
-//                throw new DatabaseException(sqlException.getMessage(), sqlException);
-//            }
-//        }
-//    }
+    public Customer getName(String name) { // TODO czy to tak powinno być ?!
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "select * from customer where name = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Customer(resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("nip_number"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+                resultSet.close(); //
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
+
+    public Customer getNip(String nipNumber) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String sql = "select * from customer where nip_number = ?;";
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, nipNumber);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new Customer(resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("nip_number"));
+            } else {
+                return null;
+            }
+        } catch (SQLException sqlException) {
+            throw new DatabaseException(sqlException.getMessage(), sqlException);
+        } finally {
+            try {
+                preparedStatement.close();
+                resultSet.close(); //
+            } catch (SQLException sqlException) {
+                throw new DatabaseException(sqlException.getMessage(), sqlException);
+            }
+        }
+    }
 
     public void add(Customer customer) {
         String sql = "insert into customer(name, nip_number) values (?, ?);";

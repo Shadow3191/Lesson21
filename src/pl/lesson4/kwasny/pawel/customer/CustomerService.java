@@ -18,12 +18,12 @@ public class CustomerService {
         return customerDao.get(id);
     }
 
-//    public Customer getName(String name) {
-//        return customerDao.getName(name);
-//    }
-//    public Customer getNip(String nipNumber) {
-//        return customerDao.getNip(nipNumber);
-//    }
+    public Customer getName(String name) {
+        return customerDao.getName(name);
+    }
+    public Customer getNip(String nipNumber) {
+        return customerDao.getNip(nipNumber);
+    }
 
     public void add(Customer customer) {
         customerDao.add(customer);

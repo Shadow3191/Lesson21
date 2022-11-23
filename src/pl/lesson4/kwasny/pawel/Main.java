@@ -150,7 +150,7 @@ public class Main {
                     CustomerService customerService = new CustomerService(connection);
                     Customer customer;
 //                    Customer customerName;
-//                    Customer customerNip;
+                    Customer customerNip;
 
                     if (choose == 1) { // show customer
                         userIO.showCustomers(customerService.find());
@@ -164,29 +164,19 @@ public class Main {
                             System.out.println("You have no one to edit, add some customer first.");
                             break;
                         }
+// =============================================== skonczylem ponizej ogarnac jak to dziala przy walidacji i poatrzec na ten kod
+                        getCustomerUntilIsNotValid(userIO, customerService);
+                        getCustomerNameUntilIsNotValid(userIO, customerService);
+
                         do {
-                            customer = customerService.get(userIO.getIdToEditCustomer()); // sprawdzenie czy jest juz takie id w bazie
-                            if (customer == null) {
-                                System.out.println("This id number don't exist in base.");
+                            customerNip = customerService.getNip(userIO.getNipToEditCustomer());
+                            if (customerNip != null) {
+                                System.out.println("This nip already exist in database.");
                             }
-                        } while (customer == null);
-
-//                        do {
-//                            customerName = customerService.getName(userIO.getNameToEditCustomer());
-//                            if (customerName != null) {
-//                                System.out.println("This customer already exist in database.");
-//                            }
-//                        } while (customerName != null);
-
-//                        do {
-//                            customerNip = customerService.getNip(userIO.getNipToEditCustomer());
-//                            if (customerNip != null) {
-//                                System.out.println("This nip already exist in database.");
-//                            }
-//                        } while (customerNip != null);
+                        } while (customerNip != null);
 
 
-                        customerService.edit(userIO.prepareCustomerToEdit(customer.getId()));
+                        customerService.edit(userIO.prepareCustomerToEdit(customer));
                     } else if (choose == 4) { // delete customer
                         userIO.showCustomers(customerService.find());
                         do {
@@ -261,7 +251,7 @@ public class Main {
                         System.out.println("Customers list :");
                         userIO.showCustomers(customerService.find());
                         do {
-                            customer = customerService.get(userIO.getIdToEditCustomer());
+                            customer = customerService.get(userIO.getCustomerId());
                             if (customer == null) {
                                 System.out.println("This id number don't exist in base.");
                             }
@@ -393,6 +383,27 @@ public class Main {
             System.out.println("You close program, see you next time !");
             System.exit(0);
         }
+    }
+
+    private static void getCustomerNameUntilIsNotValid(UserIO userIO, CustomerService customerService) {
+        Customer customerName;
+        do {
+            customerName = customerService.getName(userIO.getCustomerName());
+            if (customerName != null) {
+                System.out.println("This customer already exist in database.");
+            }
+        } while (customerName != null);
+    }
+
+    private static Customer getCustomerUntilIsNotValid(UserIO userIO, CustomerService customerService) {
+        Customer customer;
+        do {
+            customer = customerService.get(userIO.getCustomerId());
+            if (customer == null) {
+                System.out.println("This id number don't exist in base.");
+            }
+        } while (customer == null);
+        return customer;
     }
 
     private static Invoice getInvoiceUntilIsNotValid(UserIO userIO, InvoiceService invoiceService) {

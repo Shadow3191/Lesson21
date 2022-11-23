@@ -1,7 +1,6 @@
 package pl.lesson4.kwasny.pawel.invoice;
 
 import pl.lesson4.kwasny.pawel.DatabaseException;
-import pl.lesson4.kwasny.pawel.customer.Customer;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -78,7 +77,7 @@ public class InvoiceDao {
             preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, invoice.getNumber());
-            preparedStatement.setInt(2, invoice.getCustomerID());
+            preparedStatement.setInt(2, invoice.getCustomerId());
             preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
             preparedStatement.setBigDecimal(4, invoice.getPriceGrossSum());
             preparedStatement.executeUpdate();
@@ -98,7 +97,7 @@ public class InvoiceDao {
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, invoice.getNumber());
-            preparedStatement.setInt(2, invoice.getCustomerID());
+            preparedStatement.setInt(2, invoice.getCustomerId());
             preparedStatement.setBigDecimal(3, invoice.getPriceNetSum());
             preparedStatement.setBigDecimal(4, invoice.getPriceGrossSum());
             preparedStatement.setInt(5, invoice.getId());

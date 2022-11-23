@@ -32,7 +32,7 @@ public class Invoice {
         return number;
     }
 
-    public Integer getCustomerID() {
+    public Integer getCustomerId() {
         return customerID;
     }
 

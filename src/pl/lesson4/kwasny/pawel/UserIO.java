@@ -62,9 +62,9 @@ public class UserIO {
     // na tej zasadzie wszystko ma byc zrobione NIE PRZEKAZUJEMY TU ZADNYCH SERWISÓW !!!!
     // jak chcesz wywolac metode to przed zmiennymi dodajesz typy parametrow, podajesz je tylko przy nagłówku metody
     // w lini 86 w naglowku metody mam typy a pozniej w kodzie podaje juz jedynie zmienne tych typów
-    public int getIdToEditCustomer() { // sprobowac zrobic woida i przypisaną wartość przekazywać
+    public int getCustomerId() { // sprobowac zrobic woida i przypisaną wartość przekazywać
         int customerIdToEdit;
-        System.out.println("Enter the customer id number to edit :");
+        System.out.println("Enter id number :");
         try {
             customerIdToEdit = scanner.nextInt();
         } catch (InputMismatchException ex) {
@@ -98,7 +98,7 @@ public class UserIO {
 //        return checkedId;
 //    }
 
-    public String getNameToEditCustomer() {
+    public String getCustomerName() {
         System.out.println("Enter name :");
         scanner.nextLine();
         String name = scanner.nextLine();
@@ -132,9 +132,9 @@ public class UserIO {
         return nipNumberPattern.matcher(nipNumber).matches();
     }
 
-    public Customer prepareCustomerToEdit(Integer id) {
-//        int id = getIdToEditCustomer(); // jak tu przekazac wartosc z tej metody zeby nie dublowac zapytania ?!
-        String name = getNameToEditCustomer();
+    public Customer prepareCustomerToEdit(Customer customer) {
+        int id = customer.getId();
+        String name = customer.getName();
         String nipNumber = getNipToEditCustomer();
         return new Customer(id, name, nipNumber);
     }
@@ -483,7 +483,7 @@ public class UserIO {
 
     public void showInvoices(List<Invoice> invoices) {
         for (Invoice invoice : invoices) {
-            System.out.format("%3s| %15s| %3s| %5s| %5s|", invoice.getId(), invoice.getNumber(), invoice.getCustomerID(),
+            System.out.format("%3s| %15s| %3s| %5s| %5s|", invoice.getId(), invoice.getNumber(), invoice.getCustomerId(),
                     invoice.getPriceNetSum(), invoice.getPriceGrossSum());
             System.out.println();
         }
